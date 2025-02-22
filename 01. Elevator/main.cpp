@@ -32,7 +32,7 @@ public:
     void stop() { 
         direction = IDLE;
         isMoving = false;
-        cout << "Elevator stopped at floor: " << currentFloor << endl;
+        cout << "Elevator stopped at floor: " << currentFloor << endl << endl;
     }
 
     bool shouldMoveUp(int floor) {
@@ -64,15 +64,17 @@ public:
     priority_queue<int, vector<int>, greater<int>> upRequests; // Min-heap for UP direction
     priority_queue<int> downRequests; // Max-heap for DOWN direction
     unordered_set<int> processedRequests; // Track processed requests
+    unordered_map<int, int> destinationFloors;
     int requestCounter; // To generate unique request IDs
 
     ElevatorController() {
         requestCounter = 0;
     }
 
-    void addRequest(int floor, Direction direction) {
+    void addRequest(int floor, Direction direction, int destinationFloor) {
         if (processedRequests.find(floor) != processedRequests.end()) return; // Skip if already processed
         processedRequests.insert(floor);
+        destinationFloors[floor] = destinationFloor;
 
         if (direction == UP) {
             upRequests.push(floor);
@@ -105,22 +107,7 @@ public:
 
 private:
     void determineInitialDirection() {
-        if (upRequests.empty() && !downRequests.empty()) {
-            elevator.direction = DOWN;
-        }
-        else if (!upRequests.empty() && downRequests.empty()) {
-            elevator.direction = UP;
-        }
-        else if (!upRequests.empty() && !downRequests.empty()) {
-            int upRequestFloor = upRequests.top();
-            int downRequestFloor = downRequests.top();
-            if (abs(elevator.currentFloor - upRequestFloor) <= abs(elevator.currentFloor - downRequestFloor)) {
-                elevator.direction = UP;
-            }
-            else {
-                elevator.direction = DOWN;
-            }
-        }
+        elevator.direction = UP;
     };
 
     void handleUpRequests() {
@@ -149,6 +136,7 @@ private:
             }
         }
         elevator.stop();
+        this->addRequest(destinationFloors[floor], (destinationFloors[floor] - floor) > 0 ? UP : DOWN, destinationFloors[floor]);
         processedRequests.erase(floor);
     }
 };
@@ -157,11 +145,10 @@ int main() {
     ElevatorController controller;
 
     // Simulate requests
-    controller.addRequest(3, UP);
-    controller.addRequest(1, DOWN);
-    controller.addRequest(5, UP);
-    controller.addRequest(2, DOWN);
-    controller.addRequest(4, UP);
+    controller.addRequest(3, UP, 7);
+    controller.addRequest(1, DOWN, 0);
+    controller.addRequest(5, UP, 6);
+    controller.addRequest(2, DOWN, 1);
 
     // Process all requests
     controller.processRequests();
