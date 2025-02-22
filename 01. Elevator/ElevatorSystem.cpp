@@ -47,16 +47,10 @@ public:
 class ElevatorController {
 public:
     Elevator elevator;
-    
     priority_queue<int, vector<int>, greater<int>> upRequests; // Min-heap for UP direction
     priority_queue<int> downRequests; // Max-heap for DOWN direction
     unordered_set<int> processedRequests; // Track processed requests
     unordered_map<int, int> destinationFloors;
-    int requestCounter; // To generate unique request IDs
-
-    ElevatorController() {
-        requestCounter = 0;
-    }
 
     void addRequest(int floor, Direction direction, int destinationFloor) {
         if (processedRequests.find(floor) != processedRequests.end()) return; // Skip if already processed
