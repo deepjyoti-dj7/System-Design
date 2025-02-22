@@ -44,18 +44,6 @@ class Elevator {
     }
 }
 
-class Request {
-    int floor;
-    Direction direction;
-    int destinationFloor;
-
-    public Request(int floor, Direction direction, int destinationFloor) {
-        this.floor = floor;
-        this.direction = direction;
-        this.destinationFloor = destinationFloor;
-    }
-}
-
 class ElevatorController {
     Elevator elevator;
     PriorityQueue<Integer> upRequests;

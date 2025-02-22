@@ -44,19 +44,6 @@ public:
     }
 };
 
-class Request {
-public:
-    int floor;
-    Direction direction;
-    int requestId;
-
-    Request(int aFloor, Direction aDirection, int aRequestId) {
-        floor = aFloor;
-        direction = aDirection;
-        requestId = aRequestId;
-    }
-};
-
 class ElevatorController {
 public:
     Elevator elevator;
