@@ -1,15 +1,19 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import DesignPatterns.AbstractFactoryPattern.Computer;
+import DesignPatterns.AbstractFactoryPattern.Factory.ComputerFactory;
+import DesignPatterns.AbstractFactoryPattern.Factory.PCFactory;
+import DesignPatterns.AbstractFactoryPattern.Factory.ServerFactory;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+public class Main {
+
+    public static void main(String[] args) {
+        // Call the test methods
+        testAbstractFactoryPattern();
+    }
+
+    public static void testAbstractFactoryPattern() {
+        Computer pc = ComputerFactory.getComputer(new PCFactory("2 GB", "500 GB", "2.4 GHz"));
+        Computer server = ComputerFactory.getComputer(new ServerFactory("10 GB", "1 TB", "2.9 GHz"));
+        System.out.println("Abstract Factory PC Config::" + pc);
+        System.out.println("Abstract Factory Server Config::" + server);
     }
 }
