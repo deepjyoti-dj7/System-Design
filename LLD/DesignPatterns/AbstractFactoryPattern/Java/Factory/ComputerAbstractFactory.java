@@ -1,6 +1,6 @@
-package DesignPatterns.AbstractFactoryPattern.Factory;
+package Factory;
 
-import DesignPatterns.AbstractFactoryPattern.Computer;
+import Computer;
 
 public interface ComputerAbstractFactory {
     Computer createComputer();

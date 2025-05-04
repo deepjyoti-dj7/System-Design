@@ -1,5 +1,3 @@
-package Problems.ATM;
-
 public class ATM {
     private double availableCash;
 

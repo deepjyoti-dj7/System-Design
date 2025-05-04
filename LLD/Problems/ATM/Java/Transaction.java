@@ -1,5 +1,3 @@
-package Problems.ATM;
-
 public class Transaction {
     public enum Type { WITHDRAW, DEPOSIT, BALANCE_INQUIRY }
 

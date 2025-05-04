@@ -1,5 +1,3 @@
-package Problems.ATM;
-
 public class Card {
     private final String cardNumber;
     private final String pin;

@@ -1,5 +1,3 @@
-package Problems.ATM;
-
 public abstract class Account {
     protected String accountNumber;
     protected double balance;

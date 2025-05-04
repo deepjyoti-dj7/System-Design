@@ -1,5 +1,3 @@
-package Problems.ATM;
-
 public class AccountFactory {
     public static Account createAccount(String type, String accountNumber, double balance) {
         if ("savings".equalsIgnoreCase(type)) {

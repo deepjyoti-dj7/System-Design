@@ -1,7 +1,7 @@
-package DesignPatterns.AbstractFactoryPattern.Factory;
+package Factory
 
-import DesignPatterns.AbstractFactoryPattern.Computer;
-
+import Computer
+import ComputerAbstractFactory;
 /** this will provide the entry point for the client classes to create subclasses */
 public class ComputerFactory {
     public static Computer getComputer(ComputerAbstractFactory factory) {

@@ -1,4 +1,4 @@
-package DesignPatterns.AbstractFactoryPattern;
+package Server;
 
 public class Server extends Computer {
 

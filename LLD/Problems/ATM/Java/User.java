@@ -1,5 +1,3 @@
-package Problems.ATM;
-
 public class User {
     private final String name;
     private final Card card;

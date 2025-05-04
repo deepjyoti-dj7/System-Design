@@ -1,7 +1,7 @@
-package DesignPatterns.AbstractFactoryPattern.Factory;
+package Factory;
 
-import DesignPatterns.AbstractFactoryPattern.Computer;
-import DesignPatterns.AbstractFactoryPattern.Server;
+import Computer;
+import Server;
 
 public class ServerFactory implements ComputerAbstractFactory {
 

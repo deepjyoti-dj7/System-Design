@@ -1,4 +1,4 @@
-package DesignPatterns.AbstractFactoryPattern;
+package PC;
 
 public class PC extends Computer {
 

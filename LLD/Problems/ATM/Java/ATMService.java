@@ -1,5 +1,3 @@
-package Problems.ATM;
-
 public class ATMService {
     private final Bank bank;
     private final ATM atm;
