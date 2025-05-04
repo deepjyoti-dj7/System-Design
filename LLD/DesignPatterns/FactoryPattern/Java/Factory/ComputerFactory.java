@@ -1,8 +1,8 @@
-package DesignPatterns.FactoryPattern.Factory;
+package FactoryPattern.factory;
 
-import DesignPatterns.FactoryPattern.Computer;
-import DesignPatterns.FactoryPattern.PC;
-import DesignPatterns.FactoryPattern.Server;
+import FactoryPattern.Computer;
+import FactoryPattern.PC;
+import FactoryPattern.Server;
 
 public class ComputerFactory {
     public static Computer getComputer(String type, String ram, String hdd, String cpu) {

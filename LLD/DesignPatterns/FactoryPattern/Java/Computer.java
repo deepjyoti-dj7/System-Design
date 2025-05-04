@@ -1,4 +1,4 @@
-package DesignPatterns.FactoryPattern;
+package FactoryPattern;
 
 public abstract class Computer {
 
