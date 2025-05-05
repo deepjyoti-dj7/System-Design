@@ -1,3 +1,9 @@
+package AbstractFactoryPattern;
+
+import AbstractFactoryPattern.Factory.ComputerFactory;
+import AbstractFactoryPattern.Factory.PCFactory;
+import AbstractFactoryPattern.Factory.ServerFactory;
+
 public class Main {
 
     public static void main(String[] args) {

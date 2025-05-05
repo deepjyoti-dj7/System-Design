@@ -1,4 +1,4 @@
-package FactoryPattern.factory;
+package FactoryPattern.Factory;
 
 import FactoryPattern.Computer;
 import FactoryPattern.PC;

@@ -1,6 +1,6 @@
 package FactoryPattern;
 
-import FactoryPattern.factory.ComputerFactory;
+import FactoryPattern.Factory.ComputerFactory;
 
 public class Main {
     public static void main(String[] args) {

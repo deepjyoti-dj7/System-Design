@@ -1,4 +1,4 @@
-package Server;
+package AbstractFactoryPattern;
 
 public class Server extends Computer {
 

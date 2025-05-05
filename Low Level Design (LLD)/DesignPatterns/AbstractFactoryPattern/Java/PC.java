@@ -1,4 +1,4 @@
-package PC;
+package AbstractFactoryPattern;
 
 public class PC extends Computer {
 

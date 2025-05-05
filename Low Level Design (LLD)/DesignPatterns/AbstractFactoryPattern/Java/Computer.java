@@ -1,4 +1,4 @@
-package Computer;
+package AbstractFactoryPattern;
 
 public abstract class Computer {
 
