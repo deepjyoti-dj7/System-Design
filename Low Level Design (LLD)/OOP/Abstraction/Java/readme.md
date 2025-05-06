@@ -11,11 +11,11 @@ Abstraction in Java is mainly achieved using:
 
 ---
 
-## **What is Abstraction?**
+## What is Abstraction?
 
 **Abstraction** means showing only the **essential details** and hiding the **implementation**. It allows programmers to focus on **what an object does** rather than **how it does it**.
 
-### **Key Benefits of Abstraction**
+### Key Benefits of Abstraction
 
 - **Reduces complexity**: Hides unnecessary implementation details.
 - **Increases code reusability**: Encourages the reuse of abstracted logic.
@@ -24,196 +24,189 @@ Abstraction in Java is mainly achieved using:
 
 ---
 
-## **1. Abstraction Using Abstract Classes**
+## 1. Abstraction Using Abstract Classes
 
-An **abstract class** in Java is a class that cannot be instantiated. It is used to define common behavior that multiple subclasses should implement.
+An **abstract class** in Java is a class that **cannot be instantiated**. It is used to define common behavior that multiple subclasses should implement.
 
-### **Example: Abstract Class in Java**
+### Example: Abstract Class in Java
 
 ```java
-// Abstract class
-abstract class Vehicle {
-    String brand;
+abstract class Appliance {
+    protected String name;
 
-    // Constructor
-    Vehicle(String brand) {
-        this.brand = brand;
+    public Appliance(String name) {
+        this.name = name;
     }
 
-    // Abstract method (must be implemented by subclasses)
-    abstract void start();
-
-    // Concrete method (can be inherited)
-    void displayBrand() {
-        System.out.println("Brand: " + brand);
+    public void displayName() {
+        System.out.println("Appliance: " + name);
     }
+
+    public abstract void turnOn(); // Abstract method
 }
 
-// Subclass implementing the abstract method
-class Car extends Vehicle {
-    Car(String brand) {
-        super(brand);
+class Refrigerator extends Appliance {
+    public Refrigerator(String name) {
+        super(name);
     }
 
     @Override
-    void start() {
-        System.out.println("Car is starting...");
+    public void turnOn() {
+        System.out.println("Refrigerator is now cooling...");
     }
 }
 
 public class Main {
     public static void main(String[] args) {
-        Vehicle myCar = new Car("Toyota");
-        myCar.displayBrand();
-        myCar.start();
+        Appliance fridge = new Refrigerator("LG Double Door");
+        fridge.displayName();
+        fridge.turnOn();
     }
 }
 ```
 
-### **Output:**
+### Output
 
 ```
-Brand: Toyota
-Car is starting...
+Appliance: LG Double Door
+Refrigerator is now cooling...
 ```
-
-**Why Use Abstract Classes?**
-
-- Allows defining common behavior that subclasses must implement.
-- Enables partial abstraction (can have both abstract and concrete methods).
-- Prevents direct instantiation of base classes.
 
 ---
 
-## **2. Abstraction Using Interfaces**
+## 2. Abstraction Using Interfaces
 
-An **interface** in Java is a blueprint that defines a contract for classes to follow. It contains **only abstract methods** (until Java 8 introduced default and static methods).
+An **interface** in Java is a reference type that can contain only abstract methods (until Java 8+ which allows default and static methods).
 
-### **Example: Interface in Java**
+### Example: Interface in Java
 
 ```java
-// Defining an interface
-interface Animal {
-    void makeSound(); // Abstract method
+interface Drawable {
+    void draw(); // Abstract method
 }
 
-// Implementing the interface in Dog class
-class Dog implements Animal {
-    @Override
-    public void makeSound() {
-        System.out.println("Dog barks");
+class Circle implements Drawable {
+    public void draw() {
+        System.out.println("Drawing a Circle.");
     }
 }
 
-// Implementing the interface in Cat class
-class Cat implements Animal {
-    @Override
-    public void makeSound() {
-        System.out.println("Cat meows");
+class Rectangle implements Drawable {
+    public void draw() {
+        System.out.println("Drawing a Rectangle.");
     }
 }
 
 public class Main {
     public static void main(String[] args) {
-        Animal myDog = new Dog();
-        myDog.makeSound();
+        Drawable shape1 = new Circle();
+        shape1.draw();
 
-        Animal myCat = new Cat();
-        myCat.makeSound();
+        Drawable shape2 = new Rectangle();
+        shape2.draw();
     }
 }
 ```
 
-### **Output:**
+### Output
 
 ```
-Dog barks
-Cat meows
+Drawing a Circle.
+Drawing a Rectangle.
 ```
-
-**Why Use Interfaces?**
-
-- Promotes **full abstraction** (hides all implementation details).
-- Supports **multiple inheritance** in Java (a class can implement multiple interfaces).
-- Provides a standard way for different classes to implement behaviors.
 
 ---
 
-## **Abstract Class vs Interface: Key Differences**
+## Abstract Class vs Interface: Key Differences
 
-| Feature              | Abstract Class                         | Interface                                   |
-| -------------------- | -------------------------------------- | ------------------------------------------- |
-| Methods              | Can have abstract and concrete methods | Only abstract methods (before Java 8)       |
-| Fields               | Can have instance variables            | Can only have public static final variables |
-| Constructor          | Can have constructors                  | Cannot have constructors                    |
-| Multiple Inheritance | Not supported                          | Supported                                   |
-| Access Modifiers     | Can have different access modifiers    | Methods are `public` by default             |
+| Feature              | Abstract Class                         | Interface                                  |
+| -------------------- | -------------------------------------- | ------------------------------------------ |
+| Methods              | Can have abstract and concrete methods | Only abstract methods (Java 7 and below)   |
+| Fields               | Can have instance variables            | Only static final constants                |
+| Constructors         | Can have constructors                  | Cannot have constructors                   |
+| Multiple Inheritance | Not supported for classes              | Supported for interfaces                   |
+| Access Modifiers     | Can have any access modifier           | Methods are public and abstract by default |
 
 ---
 
-## **Real-World Example: Payment System**
+## Real-World Example: Notification System
 
-Abstraction is widely used in real-world applications, such as payment processing.
+Abstraction is widely used in real-world applications, such as notification handling.
 
-### **Example: Payment System with Abstraction**
+### Example: Notification System with Abstraction
 
 ```java
-// Abstract class for Payment
-abstract class Payment {
-    double amount;
+abstract class Notification {
+    protected String recipient;
 
-    Payment(double amount) {
-        this.amount = amount;
+    public Notification(String recipient) {
+        this.recipient = recipient;
     }
 
-    abstract void pay(); // Abstract method
+    public abstract void send(); // Abstract method
 }
 
-// Implementing payment methods
-class CreditCardPayment extends Payment {
-    CreditCardPayment(double amount) {
-        super(amount);
+class EmailNotification extends Notification {
+    public EmailNotification(String recipient) {
+        super(recipient);
     }
 
-    @Override
-    void pay() {
-        System.out.println("Paid " + amount + " using Credit Card");
+    public void send() {
+        System.out.println("Email sent to " + recipient);
     }
 }
 
-class PayPalPayment extends Payment {
-    PayPalPayment(double amount) {
-        super(amount);
+class PushNotification extends Notification {
+    public PushNotification(String recipient) {
+        super(recipient);
     }
 
-    @Override
-    void pay() {
-        System.out.println("Paid " + amount + " using PayPal");
+    public void send() {
+        System.out.println("Push notification sent to " + recipient);
     }
 }
 
 public class Main {
     public static void main(String[] args) {
-        Payment payment;
+        Notification n1 = new EmailNotification("john@example.com");
+        n1.send();
 
-        payment = new CreditCardPayment(150.75);
-        payment.pay();
-
-        payment = new PayPalPayment(200.50);
-        payment.pay();
+        Notification n2 = new PushNotification("User123");
+        n2.send();
     }
 }
 ```
 
-### **Output:**
+### Output
 
 ```
-Paid 150.75 using Credit Card
-Paid 200.50 using PayPal
+Email sent to john@example.com
+Push notification sent to User123
 ```
 
-**Why Use Abstraction in Payment Systems?**
+---
 
-- Allows multiple payment methods without modifying existing code.
-- Improves maintainability and scalability.
-- Provides a **common contract** for different payment types.
+## Why Use Abstraction in Notification Systems?
+
+- Multiple notification types can be introduced without modifying the system.
+- Encourages **open/closed principle**: classes are open for extension but closed for modification.
+- Simplifies usage: client code only interacts with the abstraction, not the concrete implementations.
+
+---
+
+## Summary Table
+
+| Concept        | Description                                                              |
+| -------------- | ------------------------------------------------------------------------ |
+| Abstraction    | Hides implementation, shows only necessary features                      |
+| Abstract Class | Partially abstract, can include implemented methods                      |
+| Interface      | Fully abstract (Java 7 and earlier), can have default methods in Java 8+ |
+| Use Case       | When you want different implementations of a common concept              |
+
+---
+
+## Final Thoughts
+
+Abstraction is a critical part of designing scalable and maintainable Java systems. It helps you decouple your components and work at a higher level of thinking, allowing for better design decisions and less tangled code.
+
+---
