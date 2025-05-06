@@ -11,11 +11,11 @@ Abstraction in C++ is mainly achieved using:
 
 ---
 
-## **What is Abstraction?**
+## What is Abstraction?
 
 **Abstraction** means showing only the **essential details** and hiding the **implementation**. It allows programmers to focus on **what an object does** rather than **how it does it**.
 
-### **Key Benefits of Abstraction**
+### Key Benefits of Abstraction
 
 - **Reduces complexity**: Hides unnecessary implementation details.
 - **Increases code reusability**: Encourages the reuse of abstracted logic.
@@ -24,122 +24,110 @@ Abstraction in C++ is mainly achieved using:
 
 ---
 
-## **1. Abstraction Using Abstract Classes**
+## 1. Abstraction Using Abstract Classes
 
 An **abstract class** in C++ is a class that **cannot be instantiated**. It is used to define common behavior that multiple subclasses should implement.
 
-### **Example: Abstract Class in C++**
+### Example: Abstract Class in C++
 
 ```cpp
 #include <iostream>
 using namespace std;
 
 // Abstract class
-class Vehicle {
+class Appliance {
 protected:
-    string brand;
+    string name;
 public:
-    Vehicle(string b) : brand(b) {}
-    virtual void start() = 0; // Pure virtual function
-    void displayBrand() {
-        cout << "Brand: " << brand << endl;
+    Appliance(string n) : name(n) {}
+    virtual void turnOn() = 0; // Pure virtual function
+    void displayName() {
+        cout << "Appliance: " << name << endl;
     }
 };
 
 // Subclass implementing the abstract method
-class Car : public Vehicle {
+class Refrigerator : public Appliance {
 public:
-    Car(string b) : Vehicle(b) {}
-    void start() override {
-        cout << "Car is starting..." << endl;
+    Refrigerator(string n) : Appliance(n) {}
+    void turnOn() override {
+        cout << "Refrigerator is now cooling..." << endl;
     }
 };
 
 int main() {
-    Vehicle* myCar = new Car("Toyota");
-    myCar->displayBrand();
-    myCar->start();
-    delete myCar;
+    Appliance* fridge = new Refrigerator("LG Double Door");
+    fridge->displayName();
+    fridge->turnOn();
+    delete fridge;
     return 0;
 }
 ```
 
-### **Output:**
+### Output
 
 ```
-Brand: Toyota
-Car is starting...
+Appliance: LG Double Door
+Refrigerator is now cooling...
 ```
-
-**Why Use Abstract Classes?**
-
-- Allows defining common behavior that subclasses must implement.
-- Enables partial abstraction (can have both abstract and concrete methods).
-- Prevents direct instantiation of base classes.
 
 ---
 
-## **2. Abstraction Using Interfaces (Pure Virtual Functions)**
+## 2. Abstraction Using Interfaces (Pure Virtual Functions)
 
 An **interface** in C++ is created using a class that contains **only pure virtual functions**.
 
-### **Example: Interface in C++**
+### Example: Interface in C++
 
 ```cpp
 #include <iostream>
 using namespace std;
 
 // Defining an interface
-class Animal {
+class Drawable {
 public:
-    virtual void makeSound() = 0; // Pure virtual function
+    virtual void draw() = 0; // Pure virtual function
 };
 
-// Implementing the interface in Dog class
-class Dog : public Animal {
+// Implementing the interface in Circle class
+class Circle : public Drawable {
 public:
-    void makeSound() override {
-        cout << "Dog barks" << endl;
+    void draw() override {
+        cout << "Drawing a Circle." << endl;
     }
 };
 
-// Implementing the interface in Cat class
-class Cat : public Animal {
+// Implementing the interface in Rectangle class
+class Rectangle : public Drawable {
 public:
-    void makeSound() override {
-        cout << "Cat meows" << endl;
+    void draw() override {
+        cout << "Drawing a Rectangle." << endl;
     }
 };
 
 int main() {
-    Animal* myDog = new Dog();
-    myDog->makeSound();
+    Drawable* shape1 = new Circle();
+    shape1->draw();
 
-    Animal* myCat = new Cat();
-    myCat->makeSound();
+    Drawable* shape2 = new Rectangle();
+    shape2->draw();
 
-    delete myDog;
-    delete myCat;
+    delete shape1;
+    delete shape2;
     return 0;
 }
 ```
 
-### **Output:**
+### Output
 
 ```
-Dog barks
-Cat meows
+Drawing a Circle.
+Drawing a Rectangle.
 ```
-
-**Why Use Interfaces?**
-
-- Promotes **full abstraction** (hides all implementation details).
-- Supports **multiple inheritance** in C++.
-- Provides a standard way for different classes to implement behaviors.
 
 ---
 
-## **Abstract Class vs Interface: Key Differences**
+## Abstract Class vs Interface: Key Differences
 
 | Feature              | Abstract Class                              | Interface (Pure Virtual Functions) |
 | -------------------- | ------------------------------------------- | ---------------------------------- |
@@ -151,65 +139,85 @@ Cat meows
 
 ---
 
-## **Real-World Example: Payment System**
+## Real-World Example: Notification System
 
-Abstraction is widely used in real-world applications, such as payment processing.
+Abstraction is widely used in real-world applications, such as notification handling.
 
-### **Example: Payment System with Abstraction**
+### Example: Notification System with Abstraction
 
 ```cpp
 #include <iostream>
 using namespace std;
 
-// Abstract class for Payment
-class Payment {
+// Abstract class for Notification
+class Notification {
 protected:
-    double amount;
+    string recipient;
 public:
-    Payment(double amt) : amount(amt) {}
-    virtual void pay() = 0; // Abstract method
+    Notification(string r) : recipient(r) {}
+    virtual void send() = 0; // Abstract method
 };
 
-// Implementing payment methods
-class CreditCardPayment : public Payment {
+// Implementing notification types
+class EmailNotification : public Notification {
 public:
-    CreditCardPayment(double amt) : Payment(amt) {}
-    void pay() override {
-        cout << "Paid " << amount << " using Credit Card" << endl;
+    EmailNotification(string r) : Notification(r) {}
+    void send() override {
+        cout << "Email sent to " << recipient << endl;
     }
 };
 
-class PayPalPayment : public Payment {
+class PushNotification : public Notification {
 public:
-    PayPalPayment(double amt) : Payment(amt) {}
-    void pay() override {
-        cout << "Paid " << amount << " using PayPal" << endl;
+    PushNotification(string r) : Notification(r) {}
+    void send() override {
+        cout << "Push notification sent to " << recipient << endl;
     }
 };
 
 int main() {
-    Payment* payment;
+    Notification* n1 = new EmailNotification("john@example.com");
+    n1->send();
 
-    payment = new CreditCardPayment(150.75);
-    payment->pay();
+    Notification* n2 = new PushNotification("User123");
+    n2->send();
 
-    payment = new PayPalPayment(200.50);
-    payment->pay();
-
-    delete payment;
+    delete n1;
+    delete n2;
     return 0;
 }
 ```
 
-### **Output:**
+### Output
 
 ```
-Paid 150.75 using Credit Card
-Paid 200.50 using PayPal
+Email sent to john@example.com
+Push notification sent to User123
 ```
 
-**Why Use Abstraction in Payment Systems?**
+---
 
-- Allows multiple payment methods without modifying existing code.
-- Improves maintainability and scalability.
-- Provides a **common contract** for different payment types.
+## Why Use Abstraction in Notification Systems?
+
+- Multiple notification types can be introduced without modifying the system.
+- Encourages **open/closed principle**: classes are open for extension but closed for modification.
+- Simplifies usage: client code only interacts with the abstraction, not the concrete implementations.
+
+---
+
+## Summary Table
+
+| Concept        | Description                                                 |
+| -------------- | ----------------------------------------------------------- |
+| Abstraction    | Hides implementation, shows only necessary features         |
+| Abstract Class | Partially abstract, can include implemented methods         |
+| Interface      | Fully abstract, only pure virtual functions                 |
+| Use Case       | When you want different implementations of a common concept |
+
+---
+
+## Final Thoughts
+
+Abstraction is a critical part of designing scalable and maintainable C++ systems. It helps you decouple your components and work at a higher level of thinking, allowing for better design decisions and less tangled code.
+
+---
