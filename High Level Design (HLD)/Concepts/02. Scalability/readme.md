@@ -146,11 +146,3 @@ CDNs are used to distribute content (images, videos, static assets) across a net
 - **Growth**: Scalability ensures that the system can grow with the business needs, accommodating new users or data without major redesigns.
 
 ---
-
-## Example Diagrams
-
-- [Vertical Scaling Example Diagram](#)
-- [Horizontal Scaling Example Diagram](#)
-- [Elastic Scaling Example Diagram](#)
-
----

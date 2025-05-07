@@ -160,10 +160,3 @@ In an active-passive failover configuration, one instance is actively handling t
 - **Cost Efficiency**: By preventing total failure and reducing recovery times, fault tolerance can save costs associated with system downtime and emergency recovery efforts.
 
 ---
-
-## Example Diagrams
-
-- [Fault Tolerance Example Diagram](#)
-- [Active-Passive Failover Example](#)
-
----

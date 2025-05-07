@@ -174,10 +174,3 @@ Sharding involves splitting data into smaller, manageable parts (shards) and dis
 - **Disaster Recovery**: High Availability is a key component of disaster recovery strategies, ensuring that systems can continue to function even in the event of a catastrophic failure.
 
 ---
-
-## Example Diagrams
-
-- [High Availability Architecture](#)
-- [Active-Passive Failover Example](#)
-
----

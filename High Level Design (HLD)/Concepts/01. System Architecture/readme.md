@@ -106,12 +106,3 @@ In an **event-driven architecture**, components of the system communicate throug
 Choosing the right system architecture is vital for building systems that are scalable, maintainable, and performant. It's important to analyze the problem domain and the expected growth of the application when choosing between monolithic, microservices, or other architectural patterns.
 
 ---
-
-### Example Architecture Diagrams
-
-- [Example Monolithic Architecture Diagram](#)
-- [Example Microservices Architecture Diagram](#)
-- [Example Layered Architecture Diagram](#)
-- [Example Event-Driven Architecture Diagram](#)
-
----
