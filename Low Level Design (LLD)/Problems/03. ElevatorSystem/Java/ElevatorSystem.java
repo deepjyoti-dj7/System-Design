@@ -120,7 +120,7 @@ class ElevatorController {
     }
 }
 
-public class Main {
+public class ElevatorSystem {
     public static void main(String[] args) {
         ElevatorController controller = new ElevatorController();
 
