@@ -1,6 +1,3 @@
-Here’s the markdown for the **API Design** section:
-
-````markdown
 # API Design
 
 ## Introduction
@@ -76,7 +73,8 @@ The error response should include helpful information, such as an error code and
   "message": "Missing required parameter: userId"
 }
 ```
-````
+
+```
 
 ### 7. **Security**
 
@@ -139,3 +137,4 @@ Several tools and platforms can help with the design, testing, and management of
 ## Conclusion
 
 Effective API design is vital for building scalable, secure, and maintainable distributed systems. By following key principles such as consistency, RESTful design, versioning, and ensuring good error handling and security, you can create APIs that are easy to integrate, use, and scale. With the right design practices and tools, you can create APIs that meet the needs of developers and ensure the long-term success of your system.
+```
