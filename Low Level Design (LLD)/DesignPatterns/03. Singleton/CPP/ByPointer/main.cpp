@@ -2,12 +2,12 @@
 #include <thread>
 
 void user1Logs() {
-    Logger *logger1 = Logger::getLogger();
+    Logger* logger1 = Logger::getLogger();
     logger1->Log("This message is from user1");
 }
 
 void user2Logs() {
-    Logger *logger1 = Logger::getLogger();
+    Logger* logger1 = Logger::getLogger();
     logger1->Log("This message is from user2");
 }
 
