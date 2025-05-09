@@ -8,11 +8,15 @@ public class Logger {
         System.out.println("Instance created, number of instances: " + counter);
     }
 
-    public static synchronized Logger getLogger() {
-        if (loggerInstance == null) {
-            loggerInstance = new Logger();
+    public static ThreadSafeSingleton getInstanceUsingDoubleLocking() {
+        if (instance == null) {
+            synchronized (ThreadSafeSingleton.class) {
+                if (instance == null) {
+                    instance = new ThreadSafeSingleton();
+                }
+            }
         }
-        return loggerInstance;
+        return instance;
     }
 
     public void Log(String message) {
