@@ -29,8 +29,12 @@ void Desktop::setMotherboard(std::string aMotherboard) {
     motherboard = aMotherboard;
 }
 
+void Desktop::setGraphicsCard(std::string aGraphicsCard) {
+    graphicsCard = aGraphicsCard;
+}
+
 void Desktop::showSpecifications() {
-    std::cout << "----------------------------------------------" << std::endl;
+    std::cout << "Desktop Specifications:" << std::endl;
     std::cout << "Monitor: " << monitor << std::endl;
     std::cout << "Mouse: " << mouse << std::endl;
     std::cout << "Keyboard: " << keyboard << std::endl;

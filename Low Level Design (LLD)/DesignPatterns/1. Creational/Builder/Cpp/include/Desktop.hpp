@@ -12,6 +12,7 @@ private:
     std::string ram;
     std::string processor;
     std::string motherboard;
+    std::string graphicsCard;
 
 public: 
     void setMonitor(std::string aMonitor);
@@ -21,5 +22,6 @@ public:
     void setRam(std::string aRam);
     void setProcessor(std::string aProcessor);
     void setMotherboard(std::string aMotherboard);
+    void setGraphicsCard(std::string aGraphicsCard);
     void showSpecifications();
 };

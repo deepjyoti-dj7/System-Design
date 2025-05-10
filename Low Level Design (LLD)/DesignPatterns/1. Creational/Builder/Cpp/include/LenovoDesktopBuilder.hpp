@@ -10,4 +10,5 @@ class LenovoDesktopBuilder : public DesktopBuilder {
     void buildRam();
     void buildProcessor();
     void buildMotherboard();
+    void buildGraphicsCard();
 };

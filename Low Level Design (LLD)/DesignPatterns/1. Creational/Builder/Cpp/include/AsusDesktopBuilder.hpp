@@ -10,4 +10,5 @@ class AsusDesktopBuilder : public DesktopBuilder {
     void buildRam();
     void buildProcessor();
     void buildMotherboard();
+    void buildGraphicsCard();
 };

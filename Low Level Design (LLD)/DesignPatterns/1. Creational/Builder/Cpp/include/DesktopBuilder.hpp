@@ -16,6 +16,7 @@ public:
     virtual void buildRam() = 0;
     virtual void buildProcessor() = 0;
     virtual void buildMotherboard() = 0;
+    virtual void buildGraphicsCard() = 0;
     virtual Desktop* getDesktop() {
         return desktop;
     }

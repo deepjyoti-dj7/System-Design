@@ -17,6 +17,7 @@ public:
         desktopBuilder->buildProcessor();
         desktopBuilder->buildRam();
         desktopBuilder->buildMotherboard();
+        desktopBuilder->buildGraphicsCard();
         return desktopBuilder->getDesktop();
     }
 };
