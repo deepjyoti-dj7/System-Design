@@ -13,6 +13,7 @@ public class DesktopDirector {
         builder.buildRam();
         builder.buildProcessor();
         builder.buildMotherboard();
+        builder.buildGraphicsCard();
         return builder.getDesktop();
     }
 }

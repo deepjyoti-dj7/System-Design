@@ -2,7 +2,7 @@ public class AsusDesktopBuilder extends DesktopBuilder {
 
     @Override
     public void buildMonitor() {
-        desktop.setMonitor("Asus 24-inch LED");
+        desktop.setMonitor("Asus 24-inch 1080 144hz LED");
     }
 
     @Override
@@ -27,11 +27,16 @@ public class AsusDesktopBuilder extends DesktopBuilder {
 
     @Override
     public void buildProcessor() {
-        desktop.setProcessor("Intel Core i7");
+        desktop.setProcessor("AMD Ryzen 9");
     }
 
     @Override
     public void buildMotherboard() {
-        desktop.setMotherboard("Asus ROG Strix Z690");
+        desktop.setMotherboard("Asus TUF 15");
+    }
+
+    @Override
+    public void buildGraphicsCard() {
+        desktop.setGraphicsCard("Nvidia RTX 4050");
     }
 }

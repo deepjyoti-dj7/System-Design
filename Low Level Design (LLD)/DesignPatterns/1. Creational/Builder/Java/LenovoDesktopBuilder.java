@@ -2,7 +2,7 @@ public class LenovoDesktopBuilder extends DesktopBuilder {
 
     @Override
     public void buildMonitor() {
-        desktop.setMonitor("Lenovo 27-inch IPS");
+        desktop.setMonitor("Lenovo 1440p 27-inch 144hz IPS");
     }
 
     @Override
@@ -12,7 +12,7 @@ public class LenovoDesktopBuilder extends DesktopBuilder {
 
     @Override
     public void buildKeyboard() {
-        desktop.setKeyboard("Lenovo ThinkPad Keyboard");
+        desktop.setKeyboard("Lenovo Mechanical Keyboard");
     }
 
     @Override
@@ -22,16 +22,21 @@ public class LenovoDesktopBuilder extends DesktopBuilder {
 
     @Override
     public void buildRam() {
-        desktop.setRam("32GB DDR5");
+        desktop.setRam("24GB DDR5");
     }
 
     @Override
     public void buildProcessor() {
-        desktop.setProcessor("AMD Ryzen 9");
+        desktop.setProcessor("Intel i7 13650hx");
     }
 
     @Override
     public void buildMotherboard() {
-        desktop.setMotherboard("Lenovo Legion Pro");
+        desktop.setMotherboard("Lenovo Legion 5");
+    }
+
+    @Override
+    public void buildGraphicsCard() {
+        desktop.setGraphicsCard("Nvidia RTX 4060");
     }
 }

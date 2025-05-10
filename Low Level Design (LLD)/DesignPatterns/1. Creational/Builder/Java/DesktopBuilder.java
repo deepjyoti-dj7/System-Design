@@ -12,4 +12,5 @@ public abstract class DesktopBuilder {
     public abstract void buildRam();
     public abstract void buildProcessor();
     public abstract void buildMotherboard();
+    public abstract void buildGraphicsCard();
 }

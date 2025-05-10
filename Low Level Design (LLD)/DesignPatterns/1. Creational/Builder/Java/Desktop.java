@@ -6,6 +6,7 @@ public class Desktop {
     private String ram;
     private String processor;
     private String motherboard;
+    private String graphicsCard;
 
     public void setMonitor(String monitor) {
         this.monitor = monitor;
@@ -35,6 +36,10 @@ public class Desktop {
         this.motherboard = motherboard;
     }
 
+    public void setGraphicsCard(String graphicsCard) {
+        this.graphicsCard = graphicsCard;
+    }
+
     public void showSpecifications() {
         System.out.println("Desktop Specifications:");
         System.out.println("- Monitor: " + monitor);
@@ -44,6 +49,7 @@ public class Desktop {
         System.out.println("- RAM: " + ram);
         System.out.println("- Processor: " + processor);
         System.out.println("- Motherboard: " + motherboard);
+        System.out.println("- Graphics Card: " + graphicsCard);
         System.out.println("-----------------------------------");
     }
 }
