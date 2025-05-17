@@ -3,6 +3,8 @@ package service;
 import booking.Booking;
 import booking.Seat;
 import flight.Flight;
+import flight.Route;
+import flight.Schedule;
 import user.Passenger;
 
 public class NotificationService {
@@ -10,6 +12,8 @@ public class NotificationService {
         System.out.println("Email: " + passenger.getEmail()
                 + "\n" + "Booking id: " + booking.getBookingId()
                 + "\n" + "Flight: " + flight.getFlightNumber()
-                + "\n" + "Seat No: " + seat.getSeatNumber());
+                + "\n" + "Seat No: " + seat.getSeatNumber()
+                + "\n" + "Route: " + flight.getRoute()
+                + "\n" + "Schedule: " + flight.getSchedule());
     }
 }

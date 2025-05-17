@@ -33,4 +33,12 @@ public class Flight {
     public Seat getSeatByNumber(String seatNumber) {
         return seats.stream().filter(s -> s.getSeatNumber().equals(seatNumber)).findFirst().orElse(null);
     }
+
+    public String getRoute() {
+        return route.getSource() + " to " + route.getDestination();
+    }
+
+    public String getSchedule() {
+        return schedule.getDepartureTime() + "->" + schedule.getArrivalTime();
+    }
 }

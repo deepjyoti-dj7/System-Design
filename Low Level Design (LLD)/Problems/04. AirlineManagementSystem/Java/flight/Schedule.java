@@ -10,4 +10,12 @@ public class Schedule {
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
     }
+
+    public LocalDateTime getDepartureTime() {
+        return departureTime;
+    }
+
+    public LocalDateTime getArrivalTime() {
+        return arrivalTime;
+    }
 }
