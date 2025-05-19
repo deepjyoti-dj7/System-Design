@@ -12,7 +12,7 @@ public:
     Seat(std::string seatNumber, SeatClass seatClass, SeatStatus seatStatus);
     
     void book();
-    std::string getSeatNumber();
-    SeatClass getSeatClass();
-    SeatStatus getSeatStatus();
+    const std::string getSeatNumber() const;
+    const SeatClass getSeatClass() const;
+    const SeatStatus getSeatStatus() const;
 };

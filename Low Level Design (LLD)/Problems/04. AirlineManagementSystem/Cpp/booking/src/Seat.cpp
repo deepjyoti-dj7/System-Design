@@ -3,14 +3,14 @@
 Seat::Seat(std::string seatNumber, SeatClass seatClass, SeatStatus seatStatus) 
 : seatNumber(seatNumber), seatClass(seatClass), seatStatus(seatStatus) {}
 
-std::string Seat::getSeatNumber() {
+const std::string Seat::getSeatNumber() const {
     return seatNumber;
 }
 
-SeatClass Seat::getSeatClass() {
+const SeatClass Seat::getSeatClass() const {
     return seatClass;
 }
 
-SeatStatus Seat::getSeatStatus() {
+const SeatStatus Seat::getSeatStatus() const {
     return seatStatus;
 }
