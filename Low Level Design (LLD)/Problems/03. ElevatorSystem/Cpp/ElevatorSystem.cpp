@@ -47,6 +47,7 @@ public:
 class ElevatorController {
 public:
     Elevator elevator;
+    
     priority_queue<int, vector<int>, greater<int>> upRequests; // Min-heap for UP direction
     priority_queue<int> downRequests; // Max-heap for DOWN direction
     unordered_set<int> processedRequests; // Track processed requests
