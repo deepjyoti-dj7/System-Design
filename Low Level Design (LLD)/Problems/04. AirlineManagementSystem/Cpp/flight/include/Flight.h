@@ -2,7 +2,7 @@
 #include "Aircraft.h"
 #include "Route.h"
 #include "Schedule.h"
-#include "../booking/include/Seat.h"
+#include "../../booking/include/Seat.h"
 #include "../../utils/Enums.cpp"
 #include <vector>
 #include <string>
