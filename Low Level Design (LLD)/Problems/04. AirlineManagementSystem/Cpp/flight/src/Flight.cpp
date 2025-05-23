@@ -20,12 +20,12 @@ std::vector<Seat> Flight::getAvailableSeats() const {
     return available;
 }
 
-const std::string& Flight::getFlightNumber() const {
+std::string Flight::getFlightNumber() const {
     return flightNumber;
 }
 
-const Seat* Flight::getSeatByNumber(const std::string& seatNumber) const {
-    for (const auto& seat : seats) {
+Seat* Flight::getSeatByNumber(const std::string& seatNumber) {
+    for (auto& seat : seats) {
         if (seat.getSeatNumber() == seatNumber) {
             return &seat;
         }

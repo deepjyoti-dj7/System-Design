@@ -4,11 +4,11 @@ Passenger::Passenger(const std::string& id, const std::string& name,
                      const std::string& email, const std::string& phone) :
               User(id, name, email, phone, UserRole::PASSENGER) {}
 
-void Passenger::addBooking(const Booking& booking) {
+void Passenger::addBooking(Booking* booking) {
     bookings.push_back(booking);
 }
 
-const std::vector<Booking>& Passenger::getBookings() const {
+const std::vector<Booking*>& Passenger::getBookings() const {
     return bookings;
 }
 

@@ -19,8 +19,8 @@ public:
     Flight(const std::string& flightNumber, const Aircraft& aircraft, const Route& route, const Schedule& schedule);
 
     std::vector<Seat> getAvailableSeats() const;
-    const std::string& getFlightNumber() const;
-    const Seat* getSeatByNumber(const std::string& seatNumber) const;
+    std::string getFlightNumber() const;
+    Seat* getSeatByNumber(const std::string& seatNumber);
     std::string getRoute() const;
     std::string getSchedule() const;
 };

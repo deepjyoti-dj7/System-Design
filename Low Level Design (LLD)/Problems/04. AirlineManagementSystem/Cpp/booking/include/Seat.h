@@ -9,7 +9,7 @@ private:
     SeatStatus seatStatus;  
 
 public:
-    Seat(std::string seatNumber, SeatClass seatClass, SeatStatus seatStatus);
+    Seat(std::string seatNumber, SeatClass seatClass);
     
     void book();
     const std::string getSeatNumber() const;

@@ -1,4 +1,4 @@
-#include "NotificationService.h"
+#include "../include/NotificationService.h"
 
 void NotificationService::sendBookingConfirmation(Passenger* passenger, Booking* booking, Flight* flight, Seat* seat) {
     std::cout << "Email: " << passenger->getEmail() << "\n"
