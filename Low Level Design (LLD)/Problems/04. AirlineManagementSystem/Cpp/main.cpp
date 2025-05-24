@@ -45,7 +45,6 @@ int main() {
 
     Schedule schedule(departureTime, arrivalTime);
 
-
     Flight flight("NYLON101", aircraft, route, schedule);
 
     // Passenger
