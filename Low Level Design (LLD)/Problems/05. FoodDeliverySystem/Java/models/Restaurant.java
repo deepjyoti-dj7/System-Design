@@ -30,4 +30,7 @@ public class Restaurant {
     public List<FoodItem> getMenu() {
         return menu;
     }
+
+    public static class DeliveryPerson {
+    }
 }
