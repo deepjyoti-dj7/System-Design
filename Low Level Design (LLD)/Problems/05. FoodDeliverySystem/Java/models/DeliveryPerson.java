@@ -30,4 +30,8 @@ public class DeliveryPerson {
     public DeliveryStatus getStatus() {
         return status;
     }
+
+    public void setStatus(DeliveryStatus status) {
+        this.status = status;
+    }
 }
