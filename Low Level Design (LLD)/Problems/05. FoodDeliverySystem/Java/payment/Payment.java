@@ -30,4 +30,8 @@ public class Payment {
     public PaymentStatus getStatus() {
         return status;
     }
+
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
+    }
 }
