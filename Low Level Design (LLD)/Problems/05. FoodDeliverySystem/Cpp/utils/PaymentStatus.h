@@ -1,6 +1,6 @@
 #pragma once
 
-enum class OrderStatus {
+enum class PaymentStatus {
     PENDING,
     COMPLETED,
     FAILED,
