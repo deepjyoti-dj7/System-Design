@@ -2,10 +2,10 @@
 
 #include <string>
 #include <vector>
-#include <FoodItem.h>
+#include "FoodItem.h"
 #include "User.h"
 #include "Restaurant.h"
-#include "../utils/OrderStatus.h"
+#include "../../utils/include/OrderStatus.h"
 
 class Order {
 private:

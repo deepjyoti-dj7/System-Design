@@ -10,5 +10,5 @@ private:
 
 public:
     void addCoupon(const Coupon& coupon);
-    const Coupon* getCouponByCode(std::string& code) const;
+    const Coupon* getCouponByCode(const std::string& code) const;
 };

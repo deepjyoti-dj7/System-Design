@@ -4,7 +4,7 @@ void CouponService::addCoupon(const Coupon& coupon) {
     coupons[coupon.getCode()] = coupon;
 }
 
-const Coupon* CouponService::getCouponByCode(std::string& code) const  {
+const Coupon* CouponService::getCouponByCode(const std::string& code) const  {
     auto it = coupons.find(code);
     if (it != coupons.end()) {
         return &it->second;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../../utils/DeliveryStatus.h"
+#include "../../utils/include/DeliveryStatus.h"
 
 class DeliveryPerson {
 private:

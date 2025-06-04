@@ -1,5 +1,8 @@
 #include "../include/Payment.h"
 
+Payment::Payment() 
+    : id(""), orderId(""), amount(0.0), status(PaymentStatus::PENDING) {}
+
 Payment::Payment(const std::string& id, const std::string& orderId, double amount, PaymentStatus status)
     : id(id), orderId(orderId), amount(amount), status(status) {}
 

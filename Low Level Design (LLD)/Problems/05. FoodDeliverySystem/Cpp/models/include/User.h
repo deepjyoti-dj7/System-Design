@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include "../../utils/OrderStatus.h"
-#include "../../utils/UserRole.h"
+#include "../../utils/include/OrderStatus.h"
+#include "../../utils/include/UserRole.h"
 
 class User {
 private:

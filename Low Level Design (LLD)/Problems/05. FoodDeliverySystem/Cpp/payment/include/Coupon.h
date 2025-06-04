@@ -9,6 +9,7 @@ private:
     bool isActive;
 
 public:
+    Coupon();
     Coupon(const std::string& code, double discountPercentage, bool isActive);
 
     const std::string& getCode() const;

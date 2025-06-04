@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../../utils/PaymentStatus.h"
+#include "../../utils/include/PaymentStatus.h"
 
 class Payment {
 private:
@@ -11,15 +11,13 @@ private:
     PaymentStatus status;
 
 public:
-    // Constructor
+    Payment();
     Payment(const std::string& id, const std::string& orderId, double amount, PaymentStatus status);
 
-    // Getters
     const std::string& getId() const;
     const std::string& getOrderId() const;
     double getAmount() const;
     PaymentStatus getStatus() const;
 
-    // Setter
     void setStatus(PaymentStatus newStatus);
 };

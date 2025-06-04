@@ -1,5 +1,8 @@
 #include "../include/Coupon.h"
 
+Coupon::Coupon() 
+    : code(""), discountPercentage(0.0), isActive(false) {}
+
 Coupon::Coupon(const std::string& code, double discountPercentage, bool isActive)
     : code(code), discountPercentage(discountPercentage), isActive(isActive) {}
 

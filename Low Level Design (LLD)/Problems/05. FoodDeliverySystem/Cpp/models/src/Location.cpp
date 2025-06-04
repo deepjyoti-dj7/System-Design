@@ -1,4 +1,4 @@
-#include "../include/Location.h";
+#include "../include/Location.h"
 
 Location::Location(double latitude, double longitude, const std::string& address)
     : latitude(latitude), longitude(longitude), address(address) {}
