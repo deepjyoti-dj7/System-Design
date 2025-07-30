@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ExpenseType.h"
+#include "../enums/ExpenseType.h"
 #include "User.h"
 #include <string>
 #include <vector>
