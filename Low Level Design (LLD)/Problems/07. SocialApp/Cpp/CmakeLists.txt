@@ -1,0 +1,33 @@
+cmake_minimum_required(VERSION 3.10)
+project(SocialApp LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Paths
+include_directories(include)
+include_directories(lib/googletest/googletest/include)
+include_directories(lib/googletest/googlemock/include)
+
+# Main app source (include main.cpp explicitly!)
+file(GLOB_RECURSE APP_SRC CONFIGURE_DEPENDS "src/*.cpp" "main.cpp")
+
+# Add the executable for the main application
+add_executable(SocialAppExe ${APP_SRC})
+
+# ----------------- Google Test -----------------
+# Build GoogleTest from source
+add_subdirectory(lib/googletest)
+
+# Test sources
+file(GLOB_RECURSE TEST_SRC CONFIGURE_DEPENDS "tests/*.cpp" "src/*.cpp")
+
+# Add test executable
+add_executable(SocialAppTests ${TEST_SRC})
+
+# Link GoogleTest libraries
+target_link_libraries(SocialAppTests gtest gtest_main gmock)
+
+# Enable test discovery via `ctest`
+enable_testing()
+add_test(NAME AllTests COMMAND SocialAppTests)
