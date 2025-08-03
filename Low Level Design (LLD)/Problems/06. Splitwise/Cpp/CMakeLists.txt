@@ -12,3 +12,4 @@ file(GLOB_RECURSE SOURCES
 )
 
 add_executable(SplitwiseApp ${SOURCES})
+    
