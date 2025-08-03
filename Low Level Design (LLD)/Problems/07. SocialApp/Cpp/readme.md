@@ -1,3 +1,6 @@
+Clone the gtest repo:
+git clone https://github.com/google/googletest.git lib/googletest
+
 1. **Generate build system:**
 
    ```bash
