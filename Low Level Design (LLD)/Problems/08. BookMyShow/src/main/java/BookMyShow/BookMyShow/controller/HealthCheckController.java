@@ -18,6 +18,6 @@ public class HealthCheckController {
                 .withZone(ZoneId.of("Asia/Kolkata"))  // IST timezone
                 .format(Instant.now());
 
-        return new HealthResponse("UP", "BookMyShow API", formattedTime);
+        return new HealthResponse("Health is OK!", "BookMyShow API", formattedTime);
     }
 }
