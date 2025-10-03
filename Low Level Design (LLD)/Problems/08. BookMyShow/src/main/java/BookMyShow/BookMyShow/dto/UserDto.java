@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 public class UserDto {
 
     @Data
@@ -15,10 +17,19 @@ public class UserDto {
         @NotBlank(message = "Name is required")
         private String name;
 
+        @NotBlank(message = "Username is required")
+        private String username;
+
         @Email(message = "Invalid email")
+        @NotBlank(message = "Email is required")
         private String email;
 
+        @NotBlank(message = "Password is required")
+        private String password;
+
         private String phone;
+
+        private Set<String> roles; // Optional: can be used for admin creation
     }
 
     @Data
@@ -27,7 +38,9 @@ public class UserDto {
     public static class UserResponse {
         private String id;
         private String name;
+        private String username;
         private String email;
         private String phone;
+        // Do NOT return password in responses for security reasons
     }
 }
