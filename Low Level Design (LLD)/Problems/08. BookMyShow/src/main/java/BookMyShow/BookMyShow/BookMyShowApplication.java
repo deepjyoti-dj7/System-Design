@@ -27,8 +27,8 @@ public class BookMyShowApplication {
 						.email("admin@example.com")
 						.name("Admin User")
 						.phone("0000000000")
-						.password(passwordEncoder.encode("Admin@123"))  // secure password
-						.roles(Set.of("ADMIN"))  // just "ADMIN", JWT filter will handle ROLE_ prefix
+						.password(passwordEncoder.encode("Admin@123"))
+						.roles(Set.of("ADMIN"))
 						.build();
 				userRepository.save(admin);
 				System.out.println("Admin user created!");

@@ -41,9 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 String username = jwtUtil.extractUsername(token);
                 Set<String> roles = jwtUtil.extractRoles(token);
 
-                User user = userRepository.findByUsername(username).orElse(null);
-
-                if (user != null) {
+                if (username != null) {
                     // ✅ Ensure ROLE_ prefix for Spring Security compatibility
                     var authorities = roles.stream()
                             .filter(role -> "ADMIN".equals(role) || "USER".equals(role)) // whitelist allowed roles

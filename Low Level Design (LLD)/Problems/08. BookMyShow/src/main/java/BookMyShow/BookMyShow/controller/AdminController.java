@@ -31,7 +31,7 @@ public class AdminController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        String token = userService.authenticate(request.getUsername(), request.getPassword());
+        String token = userService. authenticate(request.getUsername(), request.getPassword());
         return ResponseEntity.ok(token);
     }
 
