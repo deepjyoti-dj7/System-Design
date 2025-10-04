@@ -1,5 +1,7 @@
 package BookMyShow.BookMyShow.security;
 
+import BookMyShow.BookMyShow.entity.User;
+import BookMyShow.BookMyShow.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,14 +14,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtFilter(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -36,12 +41,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = jwtUtil.extractUsername(token);
                 Set<String> roles = jwtUtil.extractRoles(token);
 
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        username,
-                        null,
-                        roles.stream().map(SimpleGrantedAuthority::new).toList()
-                );
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                User user = userRepository.findByUsername(username).orElse(null);
+
+                if (user != null) {
+                    // ✅ Ensure ROLE_ prefix for Spring Security compatibility
+                    var authorities = roles.stream()
+                            .filter(role -> "ADMIN".equals(role) || "USER".equals(role)) // whitelist allowed roles
+                            .map(SimpleGrantedAuthority::new) // no ROLE_ prefix added
+                            .toList();
+
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(
+                                    username, // use username instead of full entity
+                                    null,
+                                    authorities
+                            );
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
             }
         }
 

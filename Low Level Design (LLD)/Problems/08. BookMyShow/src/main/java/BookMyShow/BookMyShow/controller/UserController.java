@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -21,60 +22,61 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
-    // Only ADMINs can fetch all users
+    // ==================== FETCH USERS ====================
+
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserDto.UserResponse> getAllUsers() {
-        logger.info("GET /api/users called");
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserDto.UserResponse>> getAllUsers() {
+        logger.info("Fetching all users");
+        List<UserDto.UserResponse> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
-    // Admins or the user themselves can fetch by ID
     @GetMapping("/id/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.id")
-    public ResponseEntity<UserDto.UserResponse> getUserById(@PathVariable Long id, Authentication authentication) {
-        logger.info("GET /api/users/id/{} called", id);
+    public ResponseEntity<UserDto.UserResponse> getUserById(@PathVariable Long id, Authentication auth) {
+        logger.info("Fetching user by id: {}", id);
         return userService.getUserById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // Only ADMIN can search by email
     @GetMapping("/search")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto.UserResponse> getUserByEmail(@RequestParam String email) {
-        logger.info("GET /api/users/search?email={} called", email);
+        logger.info("Searching user by email: {}", email);
         return userService.getUserByEmail(email)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // Open for registration (anyone)
+    // ==================== CREATE / UPDATE USERS ====================
+
     @PostMapping
     public ResponseEntity<UserDto.UserResponse> createUser(@Valid @RequestBody UserDto.UserRequest request) {
-        logger.info("POST /api/users called");
-        return ResponseEntity.ok(userService.createUser(request));
+        logger.info("Creating new user with email: {}", request.getEmail());
+        UserDto.UserResponse createdUser = userService.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    // Admins or the user themselves can partially update
     @PatchMapping("/id/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.id")
     public ResponseEntity<UserDto.UserResponse> partialUpdateUser(@PathVariable Long id,
                                                                   @RequestBody UserDto.UserRequest request,
-                                                                  Authentication authentication) {
-        logger.info("PATCH /api/users/id/{} called", id);
+                                                                  Authentication auth) {
+        logger.info("Updating user id: {}", id);
         return userService.partialUpdateUser(id, request)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // Only ADMIN can delete users
+    // ==================== DELETE USERS ====================
+
     @DeleteMapping("/id/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        logger.info("DELETE /api/users/id/{} called", id);
-        return userService.deleteUser(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        logger.info("Deleting user id: {}", id);
+        boolean deleted = userService.deleteUser(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

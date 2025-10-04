@@ -2,6 +2,7 @@ package BookMyShow.BookMyShow.controller;
 
 import BookMyShow.BookMyShow.entity.User;
 import BookMyShow.BookMyShow.service.UserService;
+import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +30,15 @@ public class AdminController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String username,
-                                        @RequestParam String password) {
-        String token = userService.authenticate(username, password);
+    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+        String token = userService.authenticate(request.getUsername(), request.getPassword());
         return ResponseEntity.ok(token);
     }
+
+    @Data
+    public static class LoginRequest {
+        private String username;
+        private String password;
+    }
+
 }
