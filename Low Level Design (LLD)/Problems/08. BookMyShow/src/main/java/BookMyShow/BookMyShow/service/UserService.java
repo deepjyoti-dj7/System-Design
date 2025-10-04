@@ -70,6 +70,12 @@ public class UserService {
         return userRepository.findById(id).map(this::toResponse);
     }
 
+    public Long getUserIdByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(User::getId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
     public Optional<UserDto.UserResponse> getUserByEmail(String email) {
         logger.info("Searching user by email: {}", email);
         return userRepository.findByEmail(email).map(this::toResponse);

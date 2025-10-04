@@ -5,6 +5,7 @@ import BookMyShow.BookMyShow.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -80,7 +81,7 @@ public class BookingService {
                         .booking(booking)
                         .seat(s)
                         .seatNumber(s.getSeatNumber())
-                        .price(show.getBasePrice())
+                        .price(BigDecimal.valueOf(show.getBasePrice()))
                         .build();
                 ticketRepository.save(ticket);
             }

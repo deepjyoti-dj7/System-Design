@@ -2,13 +2,10 @@ package BookMyShow.BookMyShow.controller.user;
 
 import BookMyShow.BookMyShow.dto.MovieDto;
 import BookMyShow.BookMyShow.service.MovieService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,48 +21,25 @@ public class MovieController {
     // ==================== FETCH MOVIES ====================
 
     @GetMapping
-    public ResponseEntity<List<MovieDto.MovieResponse>> getAllMovies() {
+    public ResponseEntity<ApiResponse<List<MovieDto.MovieResponse>>> getAllMovies() {
         logger.info("Fetching all movies");
-        return ResponseEntity.ok(movieService.getAllMovies());
+        List<MovieDto.MovieResponse> movies = movieService.getAllMovies();
+        return ResponseEntity.ok(new ApiResponse<>(true, "Fetched all movies successfully", movies));
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<MovieDto.MovieResponse> getMovie(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<MovieDto.MovieResponse>> getMovie(@PathVariable Long id) {
         return movieService.getMovie(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                .map(movie -> ResponseEntity.ok(new ApiResponse<>(true, "Movie found", movie)))
+                .orElse(ResponseEntity.status(404).body(new ApiResponse<>(false, "Movie not found", null)));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<MovieDto.MovieResponse>> searchMovies(@RequestParam String title) {
-        return ResponseEntity.ok(movieService.searchMovies(title));
+    public ResponseEntity<ApiResponse<List<MovieDto.MovieResponse>>> searchMovies(@RequestParam String title) {
+        List<MovieDto.MovieResponse> movies = movieService.searchMovies(title);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Search results", movies));
     }
 
-    // ==================== CREATE / UPDATE ====================
-
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MovieDto.MovieResponse> addMovie(@Valid @RequestBody MovieDto.MovieRequest request) {
-        logger.info("Creating new movie: {}", request.getTitle());
-        return ResponseEntity.status(HttpStatus.CREATED).body(movieService.addMovie(request));
-    }
-
-    @PatchMapping("/id/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MovieDto.MovieResponse> updateMovie(
-            @PathVariable Long id,
-            @RequestBody MovieDto.MovieRequest request) {
-        return movieService.updateMovie(id, request)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-    }
-
-    // ==================== DELETE ====================
-
-    @DeleteMapping("/id/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
-        boolean deleted = movieService.deleteMovie(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
+    // ==================== STANDARD API RESPONSE ====================
+    public record ApiResponse<T>(boolean success, String message, T data) {}
 }
