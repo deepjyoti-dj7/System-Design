@@ -14,7 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -42,19 +41,18 @@ public class JwtFilter extends OncePerRequestFilter {
                 Set<String> roles = jwtUtil.extractRoles(token);
 
                 if (username != null) {
-                    // ✅ Ensure ROLE_ prefix for Spring Security compatibility
                     var authorities = roles.stream()
-                            .filter(role -> "ADMIN".equals(role) || "USER".equals(role)) // whitelist allowed roles
-                            .map(SimpleGrantedAuthority::new) // no ROLE_ prefix added
+                            .map(role -> "ROLE_" + role)
+                            .map(SimpleGrantedAuthority::new)
                             .toList();
 
-                    UsernamePasswordAuthenticationToken auth =
+                    UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
-                                    username, // use username instead of full entity
+                                    username,
                                     null,
                                     authorities
                             );
-                    SecurityContextHolder.getContext().setAuthentication(auth);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         }

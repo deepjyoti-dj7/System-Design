@@ -14,7 +14,7 @@ import java.util.Set;
 public class JwtUtil {
 
     private final String SECRET_KEY = "supersecretkey12345supersecretkey12345"; // 256-bit min
-    private final long EXPIRATION_MS = 5 * 60 * 1000; // 5 minutes
+    private final long EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
 
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 

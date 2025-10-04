@@ -1,4 +1,4 @@
-package BookMyShow.BookMyShow.controller;
+package BookMyShow.BookMyShow.controller.auth;
 
 import BookMyShow.BookMyShow.entity.User;
 import BookMyShow.BookMyShow.service.UserService;
@@ -10,11 +10,11 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AdminController {
+public class AuthController {
 
     private final UserService userService;
 
-    public AdminController(UserService userService) {
+    public AuthController(UserService userService) {
         this.userService = userService;
     }
 

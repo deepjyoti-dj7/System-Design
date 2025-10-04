@@ -1,4 +1,4 @@
-package BookMyShow.BookMyShow.controller;
+package BookMyShow.BookMyShow.controller.user;
 
 import BookMyShow.BookMyShow.dto.HealthResponse;
 import org.springframework.web.bind.annotation.GetMapping;

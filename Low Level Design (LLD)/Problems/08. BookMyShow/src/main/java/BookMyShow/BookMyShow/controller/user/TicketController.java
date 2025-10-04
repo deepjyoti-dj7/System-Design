@@ -1,4 +1,4 @@
-package BookMyShow.BookMyShow.controller;
+package BookMyShow.BookMyShow.controller.user;
 
 import BookMyShow.BookMyShow.entity.Ticket;
 import BookMyShow.BookMyShow.repository.TicketRepository;

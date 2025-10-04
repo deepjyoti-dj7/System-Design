@@ -1,4 +1,4 @@
-package BookMyShow.BookMyShow.controller;
+package BookMyShow.BookMyShow.controller.user;
 
 import BookMyShow.BookMyShow.dto.UserDto;
 import BookMyShow.BookMyShow.service.UserService;
@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<UserDto.UserResponse> getUserById(@PathVariable Long id, Authentication auth) {
         logger.info("Fetching user by id: {}", id);
         return userService.getUserById(id)
@@ -60,7 +60,7 @@ public class UserController {
     }
 
     @PatchMapping("/id/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id.toString() == authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<UserDto.UserResponse> partialUpdateUser(@PathVariable Long id,
                                                                   @RequestBody UserDto.UserRequest request,
                                                                   Authentication auth) {
