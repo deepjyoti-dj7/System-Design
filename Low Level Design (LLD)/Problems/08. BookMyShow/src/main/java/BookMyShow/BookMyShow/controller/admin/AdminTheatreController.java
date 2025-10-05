@@ -42,18 +42,17 @@ public class AdminTheatreController {
                 .body(new ApiResponse<>(true, "Theatres created successfully", createdTheatres));
     }
 
-    // ==================== UPDATE MOVIE ====================
+    // ==================== UPDATE THEATRE ====================
     @PatchMapping("/id/{id}")
     public ResponseEntity<ApiResponse<TheatreDto.TheatreResponse>> updateTheatre(
-            @PathVariable Long id,
-            @Valid @RequestBody TheatreDto.TheatreRequest request) {
+            @PathVariable Long id, @Valid @RequestBody TheatreDto.TheatreRequest request) {
         return theatreService.updateTheatre(id, request)
                 .map(updated -> ResponseEntity.ok(new ApiResponse<>(true, "Theatre updated successfully", updated)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new ApiResponse<>(false, "Theatre not found", null)));
     }
 
-    // ==================== DELETE MOVIE ====================
+    // ==================== DELETE THEATRE ====================
     @DeleteMapping("/id/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteMovie(@PathVariable Long id) {
         boolean deleted = theatreService.deleteTheatre(id);
