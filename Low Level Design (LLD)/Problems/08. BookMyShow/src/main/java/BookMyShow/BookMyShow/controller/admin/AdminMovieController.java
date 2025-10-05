@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/admin/movies")
 @RequiredArgsConstructor
@@ -26,6 +28,21 @@ public class AdminMovieController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(true, "Movie created successfully", created));
     }
+
+    // ==================== BULK CREATE MOVIES ====================
+    @PostMapping("/bulk")
+    public ResponseEntity<ApiResponse<List<MovieDto.MovieResponse>>> addMovies(
+            @Valid @RequestBody List<MovieDto.MovieRequest> requests) {
+
+        logger.info("Creating {} new movies (bulk)", requests.size());
+        List<MovieDto.MovieResponse> createdMovies = requests.stream()
+                .map(movieService::addMovie)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(true, "Movies created successfully", createdMovies));
+    }
+
 
     // ==================== UPDATE MOVIE ====================
     @PatchMapping("/id/{id}")

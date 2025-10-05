@@ -25,8 +25,8 @@ public class TheatreController {
         return theatreService.getTheatresByCity(city);
     }
 
-    @PostMapping
-    public Theatre addTheatre(@RequestBody Theatre theatre) {
-        return theatreService.addTheatre(theatre);
-    }
+//    @PostMapping
+//    public Theatre addTheatre(@RequestBody Theatre theatre) {
+//        return theatreService.addTheatre(theatre);
+//    }
 }
