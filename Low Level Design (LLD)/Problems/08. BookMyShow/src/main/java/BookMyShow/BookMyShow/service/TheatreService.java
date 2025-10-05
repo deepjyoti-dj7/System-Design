@@ -19,23 +19,42 @@ import java.util.Optional;
 @Transactional
 public class TheatreService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MovieService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TheatreService.class);
     private final TheatreRepository theatreRepository;
 
-    public List<Theatre> getAllTheatres() {
+    // ==================== FETCH THEATRES ====================
+
+    public List<TheatreDto.TheatreResponse> getAllTheatres() {
         logger.info("Fetching all theatres");
-        return theatreRepository.findAll();
+        return theatreRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     public Optional<TheatreDto.TheatreResponse> getTheatre(Long id) {
         logger.info("Fetching theatre by id: {}", id);
-        return theatreRepository.findById(id).map(this::toResponse);
+        return theatreRepository.findById(id)
+                .map(this::toResponse);
     }
 
-    public List<Theatre> getTheatresByCity(String city) {
+    public List<TheatreDto.TheatreResponse> getTheatresByCity(String city) {
         logger.info("Fetching theatre by city: {}", city);
-        return theatreRepository.findByCity(city);
+        return theatreRepository.findByCity(city)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
+
+    public List<TheatreDto.TheatreResponse> searchTheatres(String name) {
+        logger.info("Searching theatres with name containing: {}", name);
+        return theatreRepository.findByName(name)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    // ==================== CREATE THEATRE ====================
 
     public TheatreDto.TheatreResponse addTheatre(TheatreDto.TheatreRequest request) {
         Theatre theatre = toEntity(request);
@@ -44,17 +63,20 @@ public class TheatreService {
         return toResponse(saved);
     }
 
+    // ==================== UPDATE THEATRE ====================
+
     public Optional<TheatreDto.TheatreResponse> updateTheatre(Long id, TheatreDto.TheatreRequest request) {
         return theatreRepository.findById(id).map(theatre -> {
             if (request.getName() != null) theatre.setName(request.getName());
-            if (request.getCity() != null) theatre.setName(request.getCity());
-            if (request.getAddress() != null) theatre.setName(request.getCity());
+            if (request.getCity() != null) theatre.setCity(request.getCity());
+            if (request.getAddress() != null) theatre.setAddress(request.getAddress());
 
             Theatre updated = theatreRepository.save(theatre);
             logger.info("Theatre updated with id: {}", updated.getId());
             return toResponse(updated);
         });
     }
+    // ==================== DELETE THEATRE ====================
 
     public boolean deleteTheatre(Long id) {
         if (!theatreRepository.existsById(id)) {
@@ -64,14 +86,6 @@ public class TheatreService {
         theatreRepository.deleteById(id);
         logger.info("Theatre deleted with id: {}", id);
         return true;
-    }
-
-    public List<TheatreDto.TheatreResponse> searchTheatres(String name) {
-        logger.info("Searching theatres with name containing: {}", name);
-        return theatreRepository.findByName(name)
-                .stream()
-                .map(this::toResponse)
-                .toList();
     }
 
     private TheatreDto.TheatreResponse toResponse(Theatre theatre) {
