@@ -1,6 +1,7 @@
 package BookMyShow.BookMyShow.controller.admin;
 
 import BookMyShow.BookMyShow.dto.MovieDto;
+import BookMyShow.BookMyShow.dto.ApiResponse;
 import BookMyShow.BookMyShow.service.MovieService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +67,4 @@ public class AdminMovieController {
                     .body(new ApiResponse<>(false, "Movie not found", null));
         }
     }
-
-    // ==================== STANDARD API RESPONSE ====================
-    public record ApiResponse<T>(boolean success, String message, T data) {}
 }

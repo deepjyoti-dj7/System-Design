@@ -1,6 +1,7 @@
 package BookMyShow.BookMyShow.controller.admin;
 
 import BookMyShow.BookMyShow.dto.UserDto;
+import BookMyShow.BookMyShow.dto.ApiResponse;
 import BookMyShow.BookMyShow.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -88,7 +89,4 @@ public class AdminUserController {
                     .body(new ApiResponse<>(false, "User not found", null));
         }
     }
-
-    // ==================== STANDARD API RESPONSE CLASS ====================
-    public record ApiResponse<T>(boolean success, String message, T data) { }
 }

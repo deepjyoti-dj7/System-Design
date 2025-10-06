@@ -1,6 +1,7 @@
 package BookMyShow.BookMyShow.controller.admin;
 
 import BookMyShow.BookMyShow.dto.ScreenDto;
+import BookMyShow.BookMyShow.dto.ApiResponse;
 import BookMyShow.BookMyShow.service.ScreenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class AdminScreenController {
 
     // ==================== CREATE SCREEN ====================
     @PostMapping
-    public ResponseEntity<AdminScreenController.ApiResponse<ScreenDto.ScreenResponse>> addScreen(@Valid @RequestBody ScreenDto.ScreenRequest request) {
+    public ResponseEntity<ApiResponse<ScreenDto.ScreenResponse>> addScreen(@Valid @RequestBody ScreenDto.ScreenRequest request) {
         logger.info("Creating new screen: {}", request.getName());
         ScreenDto.ScreenResponse created = screenService.addScreen(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -30,7 +31,7 @@ public class AdminScreenController {
     // ==================== UPDATE SCREEN ====================
     @PatchMapping("/id/{id}")
     public ResponseEntity<ApiResponse<ScreenDto.ScreenResponse>> updateScreen(
-            @PathVariable Long id, @Valid @RequestBody ScreenDto.ScreenRequest request) {
+            @PathVariable Long id, @RequestBody ScreenDto.ScreenRequest request) {
         return screenService.updateScreen(id, request)
                 .map(updated -> ResponseEntity.ok(new ApiResponse<>(true, "Screen updated successfully", updated)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -48,7 +49,4 @@ public class AdminScreenController {
                     .body(new ApiResponse<>(false, "Screen not found", null));
         }
     }
-
-    // ==================== STANDARD API RESPONSE ====================
-    public record ApiResponse<T>(boolean success, String message, T data) {}
 }

@@ -1,7 +1,7 @@
 package BookMyShow.BookMyShow.controller.user;
 
 import BookMyShow.BookMyShow.dto.ScreenDto;
-import BookMyShow.BookMyShow.entity.Screen;
+import BookMyShow.BookMyShow.dto.ApiResponse;
 import BookMyShow.BookMyShow.service.ScreenService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -29,10 +29,10 @@ public class ScreenController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<ScreenController.ApiResponse<ScreenDto.ScreenResponse>> getScreen(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ScreenDto.ScreenResponse>> getScreen(@PathVariable Long id) {
         logger.info("Fetching a screen by id");
         return screenService.getScreen(id)
-                .map(screen -> ResponseEntity.ok(new ScreenController.ApiResponse<>(true, "Screen found", screen)))
+                .map(screen -> ResponseEntity.ok(new ApiResponse<>(true, "Screen found", screen)))
                 .orElse(ResponseEntity.status(404).body(new ApiResponse<>(false, "Screen not found", null)));
     }
 
@@ -42,8 +42,4 @@ public class ScreenController {
         List<ScreenDto.ScreenResponse> screens = screenService.getScreensByTheatre(theatreId);
         return ResponseEntity.ok(new ApiResponse<>(true, "Fetched all screens successfully for a theatre", screens));
     }
-
-
-    // ==================== STANDARD API RESPONSE ====================
-    public record ApiResponse<T>(boolean success, String message, T data) {}
 }

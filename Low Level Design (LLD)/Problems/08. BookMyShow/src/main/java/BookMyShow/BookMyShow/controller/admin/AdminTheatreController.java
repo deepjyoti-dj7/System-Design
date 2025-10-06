@@ -1,6 +1,7 @@
 package BookMyShow.BookMyShow.controller.admin;
 
 import BookMyShow.BookMyShow.dto.TheatreDto;
+import BookMyShow.BookMyShow.dto.ApiResponse;
 import BookMyShow.BookMyShow.service.TheatreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +64,4 @@ public class AdminTheatreController {
                     .body(new ApiResponse<>(false, "Theatre not found", null));
         }
     }
-
-    // ==================== STANDARD API RESPONSE ====================
-    public record ApiResponse<T>(boolean success, String message, T data) {}
 }

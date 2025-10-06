@@ -1,6 +1,7 @@
 package BookMyShow.BookMyShow.controller.user;
 
 import BookMyShow.BookMyShow.dto.UserDto;
+import BookMyShow.BookMyShow.dto.ApiResponse;
 import BookMyShow.BookMyShow.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -48,7 +49,4 @@ public class UserController {
                         .body(new ApiResponse<>(false, "User not found", null))
                 );
     }
-
-    // ==================== STANDARD API RESPONSE CLASS ====================
-    public record ApiResponse<T>(boolean success, String message, T data) { }
 }

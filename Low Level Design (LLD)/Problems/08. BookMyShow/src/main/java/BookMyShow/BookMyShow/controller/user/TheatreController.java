@@ -1,7 +1,7 @@
 package BookMyShow.BookMyShow.controller.user;
 
 import BookMyShow.BookMyShow.dto.TheatreDto;
-import BookMyShow.BookMyShow.entity.Theatre;
+import BookMyShow.BookMyShow.dto.ApiResponse;
 import BookMyShow.BookMyShow.service.TheatreService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class TheatreController {
     public ResponseEntity<ApiResponse<TheatreDto.TheatreResponse>> getTheatre(@PathVariable Long id) {
         logger.info("Fetching a theatre by id");
         return theatreService.getTheatre(id)
-                .map(theatre -> ResponseEntity.ok(new TheatreController.ApiResponse<>(true, "Theatre found", theatre)))
+                .map(theatre -> ResponseEntity.ok(new ApiResponse<>(true, "Theatre found", theatre)))
                 .orElse(ResponseEntity.status(404).body(new ApiResponse<>(false, "Theatre not found", null)));
     }
 
@@ -47,7 +47,4 @@ public class TheatreController {
         List<TheatreDto.TheatreResponse> theatres = theatreService.getTheatresByCity(city);
         return ResponseEntity.ok(new ApiResponse<>(true, "Search results", theatres));
     }
-
-    // ==================== STANDARD API RESPONSE ====================
-    public record ApiResponse<T>(boolean success, String message, T data) {}
 }

@@ -1,6 +1,7 @@
 package BookMyShow.BookMyShow.controller.user;
 
 import BookMyShow.BookMyShow.dto.MovieDto;
+import BookMyShow.BookMyShow.dto.ApiResponse;
 import BookMyShow.BookMyShow.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -39,7 +40,4 @@ public class MovieController {
         List<MovieDto.MovieResponse> movies = movieService.searchMovies(title);
         return ResponseEntity.ok(new ApiResponse<>(true, "Search results", movies));
     }
-
-    // ==================== STANDARD API RESPONSE ====================
-    public record ApiResponse<T>(boolean success, String message, T data) {}
 }
