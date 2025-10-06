@@ -88,6 +88,7 @@ public class ScreenService {
         return new ScreenDto.ScreenResponse(
                 screen.getId(),
                 screen.getTheatre().getId(),
+                screen.getTheatre().getName(),
                 screen.getName(),
                 screen.getTotalSeats()
         );

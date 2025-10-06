@@ -32,6 +32,7 @@ public class ScreenDto {
     public static class ScreenResponse {
         private Long id;
         private Long theatreId;
+        private String theatreName;
         private String name;
         private Integer totalSeats;
     }
