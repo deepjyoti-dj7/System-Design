@@ -19,7 +19,12 @@ public class Seat {
     @JoinColumn(name = "screen_id")
     private Screen screen;
 
+    @Column(nullable = false)
     private String seatNumber;
-    private String seatType;
-    private Boolean active = true;
+
+    @Column(nullable = false)
+    private String type;
+
+    @Column(nullable = false)
+    private Boolean isBooked = false;
 }

@@ -21,6 +21,7 @@ import java.util.Optional;
 public class ScreenService {
 
     private static final Logger logger = LoggerFactory.getLogger(ScreenService.class);
+
     private final ScreenRepository screenRepository;
     private final TheatreRepository theatreRepository;
 
