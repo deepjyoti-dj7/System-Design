@@ -1,8 +1,10 @@
 package BookMyShow.BookMyShow.service;
 
+import BookMyShow.BookMyShow.dto.BookingDto.BookingRequest;
+import BookMyShow.BookMyShow.dto.BookingDto.BookingResponse;
 import BookMyShow.BookMyShow.entity.*;
 import BookMyShow.BookMyShow.repository.*;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,12 +12,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class BookingService {
+
     private final SeatRepository seatRepository;
-    private final SeatLockRepository seatLockRepository;
+    private final SeatLockService seatLockService;
     private final ShowRepository showRepository;
     private final BookingRepository bookingRepository;
     private final TicketRepository ticketRepository;
@@ -23,44 +27,38 @@ public class BookingService {
     private final PaymentService paymentService;
 
     @Transactional
-    public Booking createBooking(Long userId, Long showId, List<String> seatNumbers, String paymentToken) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Show show = showRepository.findById(showId).orElseThrow(() -> new RuntimeException("Show not found"));
+    public BookingResponse createBooking(BookingRequest request) {
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Show show = showRepository.findById(request.getShowId())
+                .orElseThrow(() -> new RuntimeException("Show not found"));
 
-        List<Seat> seats = seatRepository.findByScreenIdAndSeatNumberIn(show.getScreen().getId(), seatNumbers);
-        if (seats.size() != seatNumbers.size()) throw new RuntimeException("Some seats not found");
+        List<Seat> seats = seatRepository.findByScreenIdAndSeatNumberIn(
+                show.getScreen().getId(), request.getSeatNumbers()
+        );
+        if (seats.size() != request.getSeatNumbers().size())
+            throw new RuntimeException("Some seats not found");
 
-        LocalDateTime now = LocalDateTime.now();
-        for (Seat s : seats) {
-            boolean locked = seatLockRepository.existsBySeatIdAndShowIdAndExpiresAtAfter(s.getId(), showId, now);
-            if (locked) throw new RuntimeException("Seat already locked: " + s.getSeatNumber());
-        }
-
+        // Step 1: Lock seats
         String sessionId = UUID.randomUUID().toString();
-        LocalDateTime expiresAt = now.plusMinutes(5);
-        for (Seat s : seats) {
-            SeatLock lock = SeatLock.builder()
-                    .seatId(s.getId())
-                    .showId(showId)
-                    .sessionId(sessionId)
-                    .lockedAt(now)
-                    .expiresAt(expiresAt)
-                    .build();
-            seatLockRepository.save(lock);
-        }
+        List<Long> seatIds = seats.stream().map(Seat::getId).collect(Collectors.toList());
+        seatLockService.lockSeats(seatIds, show.getId(), sessionId);
 
+        // Step 2: Calculate total price and charge
         double total = seats.size() * show.getBasePrice();
-        boolean paid = paymentService.charge(paymentToken, total);
+        boolean paid = paymentService.charge(request.getPaymentToken(), total, request.getBookingId());
 
+        // Step 3: Create booking
         Booking booking = Booking.builder()
                 .user(user)
                 .show(show)
-                .bookingTime(now)
+                .bookingTime(LocalDateTime.now())
                 .totalPrice(total)
                 .status(paid ? "CONFIRMED" : "INITIATED")
                 .build();
         booking = bookingRepository.save(booking);
 
+        // Step 4: Create tickets if payment successful
         if (paid) {
             for (Seat s : seats) {
                 Ticket ticket = Ticket.builder()
@@ -70,17 +68,32 @@ public class BookingService {
                         .price(BigDecimal.valueOf(show.getBasePrice()))
                         .build();
                 ticketRepository.save(ticket);
+
+                // Mark seat as booked
+                s.setIsBooked(true);
+                seatRepository.save(s);
             }
-            seatLockRepository.deleteBySessionId(sessionId);
+            seatLockService.unlockSeats(show.getId(), seatIds, sessionId);
         }
 
-        return booking;
+        return new BookingResponse(
+                booking.getId(),
+                booking.getStatus(),
+                seats.stream().map(Seat::getSeatNumber).collect(Collectors.toList()),
+                total
+        );
     }
 
     @Transactional
     public void cancelBooking(Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
         booking.setStatus("CANCELLED");
         bookingRepository.save(booking);
+
+        // Unlock seats for cancelled booking
+        List<Long> seatIds = booking.getTickets()
+                .stream().map(t -> t.getSeat().getId()).toList();
+        seatLockService.unlockSeats(booking.getShow().getId(), seatIds, booking.getId().toString());
     }
 }

@@ -12,6 +12,7 @@ public class BookingDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BookingRequest {
+        private Long bookingId;
         private Long userId;
         private Long showId;
         private List<String> seatNumbers;

@@ -1,29 +1,28 @@
 package BookMyShow.BookMyShow.controller.user;
 
-import BookMyShow.BookMyShow.dto.BookingRequest;
-import BookMyShow.BookMyShow.entity.Booking;
+import BookMyShow.BookMyShow.dto.BookingDto.BookingRequest;
+import BookMyShow.BookMyShow.dto.BookingDto.BookingResponse;
 import BookMyShow.BookMyShow.service.BookingService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/bookings")
+@RequiredArgsConstructor
 public class BookingController {
+
     private final BookingService bookingService;
 
-    public BookingController(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
-
     @PostMapping
-    public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest request) {
-        Booking booking = bookingService.createBooking(request.getUserId(), request.getShowId(), request.getSeatNumbers(), request.getPaymentToken());
-        return ResponseEntity.ok(booking);
+    public ResponseEntity<BookingResponse> createBooking(@RequestBody BookingRequest request) {
+        BookingResponse response = bookingService.createBooking(request);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/{id}/cancel")
-    public ResponseEntity<Void> cancelBooking(@PathVariable Long id) {
-        bookingService.cancelBooking(id);
-        return ResponseEntity.ok().build();
+    @PostMapping("/cancel/{bookingId}")
+    public ResponseEntity<String> cancelBooking(@PathVariable Long bookingId) {
+        bookingService.cancelBooking(bookingId);
+        return ResponseEntity.ok("Booking cancelled successfully");
     }
 }
