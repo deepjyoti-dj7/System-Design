@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // other authenticated endpoints
-                        .requestMatchers("/api/users/**", "/api/movies/**", "/api/theatres/**", "/api/screens/**").authenticated()
+                        .requestMatchers("/api/bookings/**","/api/users/**", "/api/movies/**", "/api/theatres/**", "/api/screens/**", "/api/shows/**", "/api/seats/**", "/api/seatlocks/**", "/api/tickets/**").authenticated()
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
