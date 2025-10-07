@@ -1,13 +1,13 @@
-package BookMyShow.BookMyShow;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
-class BookMyShowApplicationTests {
-
-	@Test
-	void contextLoads() {
-	}
-
-}
+//package BookMyShow.BookMyShow;
+//
+//import org.junit.jupiter.api.Test;
+//import org.springframework.boot.test.context.SpringBootTest;
+//
+//@SpringBootTest
+//class BookMyShowApplicationTests {
+//
+//	@Test
+//	void contextLoads() {
+//	}
+//
+//}

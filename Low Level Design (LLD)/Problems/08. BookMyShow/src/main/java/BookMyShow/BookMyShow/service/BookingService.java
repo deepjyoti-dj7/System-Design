@@ -2,6 +2,7 @@ package BookMyShow.BookMyShow.service;
 
 import BookMyShow.BookMyShow.entity.*;
 import BookMyShow.BookMyShow.repository.*;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@AllArgsConstructor
 @Service
 public class BookingService {
     private final SeatRepository seatRepository;
@@ -19,22 +21,6 @@ public class BookingService {
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
     private final PaymentService paymentService;
-
-    public BookingService(SeatRepository seatRepository,
-                          SeatLockRepository seatLockRepository,
-                          ShowRepository showRepository,
-                          BookingRepository bookingRepository,
-                          TicketRepository ticketRepository,
-                          UserRepository userRepository,
-                          PaymentService paymentService) {
-        this.seatRepository = seatRepository;
-        this.seatLockRepository = seatLockRepository;
-        this.showRepository = showRepository;
-        this.bookingRepository = bookingRepository;
-        this.ticketRepository = ticketRepository;
-        this.userRepository = userRepository;
-        this.paymentService = paymentService;
-    }
 
     @Transactional
     public Booking createBooking(Long userId, Long showId, List<String> seatNumbers, String paymentToken) {

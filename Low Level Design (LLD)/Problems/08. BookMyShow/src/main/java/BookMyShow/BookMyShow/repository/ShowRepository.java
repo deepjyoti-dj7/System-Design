@@ -9,4 +9,5 @@ import java.util.List;
 public interface ShowRepository extends JpaRepository<Show, Long> {
     List<Show> findByMovieIdAndStartTimeBetween(Long movieId, LocalDateTime from, LocalDateTime to);
     List<Show> findByScreenId(Long screenId);
+    List<Show> findByMovieId(Long movieId);
 }
