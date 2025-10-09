@@ -3,20 +3,19 @@ package BookMyShow.BookMyShow.controller.auth;
 import BookMyShow.BookMyShow.entity.User;
 import BookMyShow.BookMyShow.service.UserService;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final UserService userService;
-
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestParam String username,
@@ -29,16 +28,23 @@ public class AuthController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        String token = userService. authenticate(request.getUsername(), request.getPassword());
-        return ResponseEntity.ok(token);
+    @PostMapping(value = "/login", consumes = "application/x-www-form-urlencoded")
+    public ResponseEntity<Map<String, String>> login(
+            @RequestParam String username,
+            @RequestParam String password
+    ) {
+        String token = userService.authenticate(username, password);
+
+        return ResponseEntity.ok(Map.of(
+                "access_token", token,
+                "token_type", "bearer"
+        ));
     }
+
 
     @Data
     public static class LoginRequest {
         private String username;
         private String password;
     }
-
 }
