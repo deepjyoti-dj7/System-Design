@@ -3,6 +3,7 @@ package BookMyShow.BookMyShow.controller.user;
 import BookMyShow.BookMyShow.dto.MovieDto;
 import BookMyShow.BookMyShow.dto.ApiResponse;
 import BookMyShow.BookMyShow.service.MovieService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ public class MovieController {
     // ==================== FETCH MOVIES ====================
 
     @GetMapping
+    @Operation(summary = "Get all movies", description = "Returns all movies that exists")
     public ResponseEntity<ApiResponse<List<MovieDto.MovieResponse>>> getAllMovies() {
         logger.info("Fetching all movies");
         List<MovieDto.MovieResponse> movies = movieService.getAllMovies();
@@ -29,6 +31,7 @@ public class MovieController {
     }
 
     @GetMapping("/id/{id}")
+    @Operation(summary = "Get a movie by id", description = "Returns a movies by it's id")
     public ResponseEntity<ApiResponse<MovieDto.MovieResponse>> getMovie(@PathVariable Long id) {
         return movieService.getMovie(id)
                 .map(movie -> ResponseEntity.ok(new ApiResponse<>(true, "Movie found", movie)))
@@ -36,6 +39,7 @@ public class MovieController {
     }
 
     @GetMapping("/search")
+    @Operation(summary = "Get a movies by name", description = "Returns a movie by searching it's name")
     public ResponseEntity<ApiResponse<List<MovieDto.MovieResponse>>> searchMovies(@RequestParam String title) {
         List<MovieDto.MovieResponse> movies = movieService.searchMovies(title);
         return ResponseEntity.ok(new ApiResponse<>(true, "Search results", movies));
