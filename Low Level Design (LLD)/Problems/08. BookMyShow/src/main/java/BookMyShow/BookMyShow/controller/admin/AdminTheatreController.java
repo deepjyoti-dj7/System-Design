@@ -3,6 +3,7 @@ package BookMyShow.BookMyShow.controller.admin;
 import BookMyShow.BookMyShow.dto.TheatreDto;
 import BookMyShow.BookMyShow.dto.ApiResponse;
 import BookMyShow.BookMyShow.service.TheatreService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ public class AdminTheatreController {
 
     // ==================== CREATE THEATRE ====================
     @PostMapping
+    @Operation(summary = "Create a new theatre", description = "Creates a new theatre with the given details (admin only)")
     public ResponseEntity<ApiResponse<TheatreDto.TheatreResponse>> addTheatre(@Valid @RequestBody TheatreDto.TheatreRequest request) {
         logger.info("Creating new theatre: {}", request.getName());
         TheatreDto.TheatreResponse created = theatreService.addTheatre(request);
@@ -31,7 +33,7 @@ public class AdminTheatreController {
     }
 
     // ==================== BULK CREATE THEATRES ====================
-    @PostMapping("/bulk")
+    @Operation(summary = "Create new theatres in bulk", description = "Creates new theatres in bulk with the given details (admin only)")
     public  ResponseEntity<ApiResponse<List<TheatreDto.TheatreResponse>>> addTheatres(
             @Valid @RequestBody List<TheatreDto.TheatreRequest> requests) {
         logger.info("Creating {} new threatres (bulk)", requests.size());
@@ -45,6 +47,7 @@ public class AdminTheatreController {
 
     // ==================== UPDATE THEATRE ====================
     @PatchMapping("/id/{id}")
+    @Operation(summary = "Update theatre by ID", description = "Partially updates a theatre's details by ID (admin only)")
     public ResponseEntity<ApiResponse<TheatreDto.TheatreResponse>> updateTheatre(
             @PathVariable Long id, @Valid @RequestBody TheatreDto.TheatreRequest request) {
         return theatreService.updateTheatre(id, request)
@@ -55,6 +58,7 @@ public class AdminTheatreController {
 
     // ==================== DELETE THEATRE ====================
     @DeleteMapping("/id/{id}")
+    @Operation(summary = "Delete theatre by ID", description = "Deletes a theatre by their ID (admin only)")
     public ResponseEntity<ApiResponse<Void>> deleteMovie(@PathVariable Long id) {
         boolean deleted = theatreService.deleteTheatre(id);
         if (deleted) {
