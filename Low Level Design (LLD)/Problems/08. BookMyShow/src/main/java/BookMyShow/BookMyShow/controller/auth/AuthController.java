@@ -2,6 +2,9 @@ package BookMyShow.BookMyShow.controller.auth;
 
 import BookMyShow.BookMyShow.entity.User;
 import BookMyShow.BookMyShow.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +16,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Public endpoints for user login and registration")
+@SecurityRequirement(name = "")
 public class AuthController {
 
     private final UserService userService;
 
     @PostMapping("/register")
+    @Operation(summary = "Register a new user", description = "Registers new users (public)")
     public ResponseEntity<User> register(@RequestParam String username,
                                          @RequestParam String email,
                                          @RequestParam String password,
@@ -29,6 +35,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/login", consumes = "application/x-www-form-urlencoded")
+    @Operation(summary = "Login for a user", description = "Login for existing users (public)")
     public ResponseEntity<Map<String, String>> login(
             @RequestParam String username,
             @RequestParam String password

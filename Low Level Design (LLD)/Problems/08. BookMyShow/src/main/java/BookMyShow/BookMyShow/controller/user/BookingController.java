@@ -4,6 +4,7 @@ import BookMyShow.BookMyShow.dto.BookingDto.BookingRequest;
 import BookMyShow.BookMyShow.dto.BookingDto.BookingResponse;
 import BookMyShow.BookMyShow.service.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/bookings")
 @RequiredArgsConstructor
+@Tag(name = "Booking", description = "Booking endpoints for authenticated users")
 public class BookingController {
 
     private final BookingService bookingService;
