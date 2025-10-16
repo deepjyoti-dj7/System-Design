@@ -18,13 +18,11 @@ public class Passenger {
     private Long id;
 
     private String firstName;
-
     private String lastName;
-
     private String email;
-
     private String phone;
 
-    @OneToMany(mappedBy = "passenger", cascade = CascadeType.ALL)
-    private List<Booking> bookings;
+    @ManyToOne
+    @JoinColumn(name = "booking_id")  // foreign key column in 'passengers' table
+    private Booking booking;
 }

@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Airline {
+public class    Airline {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
