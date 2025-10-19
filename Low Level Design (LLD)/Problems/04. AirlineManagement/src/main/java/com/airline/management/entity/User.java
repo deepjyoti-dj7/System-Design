@@ -23,6 +23,9 @@ public class User {
 
     private String email;
 
+    private String firstName;
+    private String lastName;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
