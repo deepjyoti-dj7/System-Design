@@ -13,5 +13,9 @@ spring:
       ddl-auto: update
     show-sql: true
 
-  server:
-    port: 8080
+server:
+  port: 8080
+
+jwt:
+  secret: bXlfdmVyeV9zZWNyZXRfamV0X3Rva2VuX3NpZ25pbmdfa2V5MTIzNDU27
+  expiration-ms: 86400000 # 1 day
