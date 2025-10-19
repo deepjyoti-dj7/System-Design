@@ -1,6 +1,6 @@
 package com.airline.management.controller;
 
-import com.airline.management.dto.response.HealthResponse;
+import com.airline.management.dto.util.HealthResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

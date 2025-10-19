@@ -1,4 +1,4 @@
-package com.airline.management.dto.response;
+package com.airline.management.dto.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
