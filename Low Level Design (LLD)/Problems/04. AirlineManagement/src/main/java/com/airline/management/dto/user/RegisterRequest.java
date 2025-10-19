@@ -23,4 +23,5 @@ public class RegisterRequest {
     // profile fields
     private String firstName;
     private String lastName;
+
 }
