@@ -4,6 +4,7 @@ import com.airline.management.dto.airport.AirportRequest;
 import com.airline.management.dto.airport.AirportResponse;
 import com.airline.management.entity.Airport;
 import com.airline.management.exception.ResourceNotFoundException;
+import com.airline.management.exception.ValidationException;
 import com.airline.management.mapper.AirportMapper;
 import com.airline.management.repository.AirportRepository;
 import com.airline.management.service.AirportService;
@@ -22,6 +23,10 @@ public class AirportServiceImpl implements AirportService {
 
     @Override
     public AirportResponse createAirport(AirportRequest request) {
+        if (airportRepository.findByCode(request.getCode()).isPresent()) {
+            throw new ValidationException("Airport with code '" + request.getCode() + "' already exists");
+        }
+
         Airport airport = airportMapper.toEntity(request);
         airportRepository.save(airport);
         return airportMapper.toResponse(airport);
@@ -36,27 +41,36 @@ public class AirportServiceImpl implements AirportService {
 
     @Override
     public List<AirportResponse> getAllAirports() {
-        return airportRepository.findAll().stream()
+        return airportRepository.findAll()
+                .stream()
                 .map(airportMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public AirportResponse updateAirport(Long id, AirportRequest request) {
-        Airport existing = airportRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Airport not found"));
-        existing.setName(request.getName());
-        existing.setCode(request.getCode());
-        existing.setCity(request.getCity());
-        existing.setCountry(request.getCountry());
-        airportRepository.save(existing);
-        return airportMapper.toResponse(existing);
+        Airport airport = airportRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Airport not found with id: " + id));
+
+        if (request.getCode() != null && !request.getCode().equals(airport.getCode())
+                && airportRepository.findByCode(request.getCode()).isPresent()) {
+            throw new ValidationException("Airport code '" + request.getCode() + "' already in use");
+        }
+
+        if (request.getName() != null) airport.setName(request.getName());
+        if (request.getCode() != null) airport.setCode(request.getCode());
+        if (request.getCity() != null) airport.setCity(request.getCity());
+        if (request.getCountry() != null) airport.setCountry(request.getCountry());
+
+        airportRepository.save(airport);
+        return airportMapper.toResponse(airport);
     }
 
     @Override
     public void deleteAirport(Long id) {
-        Airport airport = airportRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Airport not found"));
-        airportRepository.delete(airport);
+        if (!airportRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Airport not found with id: " + id);
+        }
+        airportRepository.deleteById(id);
     }
 }
