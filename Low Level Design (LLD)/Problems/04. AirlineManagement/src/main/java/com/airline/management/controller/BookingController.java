@@ -23,7 +23,7 @@ public class BookingController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<BookingResponse>> createBooking(@Valid @RequestBody BookingRequest request) {
         BookingResponse response = bookingService.createBooking(request);
-        return ResponseEntity.ok(ApiResponse.ok("Booking created", response));
+        return ResponseEntity.ok(ApiResponse.ok("Booking created successfully", response));
     }
 
     @GetMapping("/{id}")
