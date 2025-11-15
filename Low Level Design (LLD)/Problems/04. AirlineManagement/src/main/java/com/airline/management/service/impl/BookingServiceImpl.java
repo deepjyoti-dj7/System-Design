@@ -6,6 +6,8 @@ import com.airline.management.entity.Booking;
 import com.airline.management.entity.Flight;
 import com.airline.management.entity.Passenger;
 import com.airline.management.entity.User;
+import com.airline.management.event.model.BookingCreatedEvent;
+import com.airline.management.event.producer.BookingEventProducer;
 import com.airline.management.exception.ResourceNotFoundException;
 import com.airline.management.mapper.BookingMapper;
 import com.airline.management.repository.*;
@@ -27,6 +29,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
     private final PassengerRepository passengerRepository;
     private final BookingMapper bookingMapper;
+    private final BookingEventProducer bookingEventProducer;
 
     @Override
     public BookingResponse createBooking(BookingRequest request) {
@@ -44,6 +47,16 @@ public class BookingServiceImpl implements BookingService {
             passengers.forEach(p -> p.setBooking(booking));
             passengerRepository.saveAll(passengers);
             booking.setPassengers(passengers);
+
+            BookingCreatedEvent event = BookingCreatedEvent.builder()
+                    .bookingId(booking.getId())
+                    .flightId(booking.getFlight().getId())
+                    .userId(booking.getUser().getId())
+                    .amount(booking.getFlight().getTicketPrice())
+                    .bookingTime(booking.getBookingTime())
+                    .build();
+
+            bookingEventProducer.sendBookingCreatedEvent(event);
         }
 
         return bookingMapper.toResponse(booking);
