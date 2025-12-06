@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.urbanclone</groupId>
+    <artifactId>urban-company-clone</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>Urban Company Clone</name>
+    <description>Home Services Platform - Microservices Architecture</description>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.0</version>
+    </parent>
+
+    <properties>
+        <java.version>17</java.version>
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
+        <lombok.version>1.18.30</lombok.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+    </properties>
+
+    <modules>
+        <module>services/user-service</module>
+        <module>services/booking-service</module>
+        <module>services/payment-service</module>
+        <module>services/partner-service</module>
+        <module>services/catalog-service</module>
+        <module>services/notification-service</module>
+        <module>services/api-gateway</module>
+        <module>services/discovery-service</module>
+        <module>common/common-dto</module>
+        <module>common/common-utils</module>
+        <module>common/common-security</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: user-service
+  
+  datasource:
+    url: jdbc:postgresql://user-db:5432/user_db
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:kafka:9092}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://discovery-service:8761/eureka/}
+
+jwt:
+  secret: ${JWT_SECRET:urbancompanysecretsupersecretkeyshouldbe256bits}
+  expiration: 86400000
+
+logging:
+  level:
+    com.urbanclone: INFO

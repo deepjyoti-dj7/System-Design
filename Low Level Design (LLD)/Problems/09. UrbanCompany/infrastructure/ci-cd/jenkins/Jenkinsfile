@@ -1,0 +1,271 @@
+pipeline {
+    agent any
+    
+    environment {
+        REGISTRY = 'ghcr.io'
+        IMAGE_PREFIX = 'urban-company'
+        AWS_REGION = 'us-east-1'
+        SONAR_HOST_URL = credentials('sonar-host-url')
+        SONAR_TOKEN = credentials('sonar-token')
+    }
+    
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'prod'], description: 'Target environment')
+        string(name: 'VERSION', defaultValue: 'latest', description: 'Version tag')
+        booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip tests')
+        booleanParam(name: 'DEPLOY', defaultValue: true, description: 'Deploy after build')
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                script {
+                    env.GIT_COMMIT_SHORT = sh(
+                        script: "git rev-parse --short HEAD",
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+        
+        stage('Test') {
+            when {
+                expression { !params.SKIP_TESTS }
+            }
+            parallel {
+                stage('User Service') {
+                    steps {
+                        dir('services/user-service') {
+                            sh 'mvn clean test jacoco:report'
+                            junit 'target/surefire-reports/*.xml'
+                            jacoco execPattern: 'target/jacoco.exec'
+                        }
+                    }
+                }
+                stage('Booking Service') {
+                    steps {
+                        dir('services/booking-service') {
+                            sh 'mvn clean test jacoco:report'
+                            junit 'target/surefire-reports/*.xml'
+                            jacoco execPattern: 'target/jacoco.exec'
+                        }
+                    }
+                }
+                stage('Payment Service') {
+                    steps {
+                        dir('services/payment-service') {
+                            sh 'mvn clean test jacoco:report'
+                            junit 'target/surefire-reports/*.xml'
+                            jacoco execPattern: 'target/jacoco.exec'
+                        }
+                    }
+                }
+                stage('Partner Service') {
+                    steps {
+                        dir('services/partner-service') {
+                            sh 'mvn clean test jacoco:report'
+                            junit 'target/surefire-reports/*.xml'
+                            jacoco execPattern: 'target/jacoco.exec'
+                        }
+                    }
+                }
+                stage('Catalog Service') {
+                    steps {
+                        dir('services/catalog-service') {
+                            sh 'mvn clean test jacoco:report'
+                            junit 'target/surefire-reports/*.xml'
+                            jacoco execPattern: 'target/jacoco.exec'
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def services = ['user-service', 'booking-service', 'payment-service', 'partner-service', 'catalog-service']
+                    services.each { service ->
+                        dir("services/${service}") {
+                            withSonarQubeEnv('SonarQube') {
+                                sh """
+                                    mvn sonar:sonar \
+                                      -Dsonar.projectKey=${service} \
+                                      -Dsonar.projectName=${service} \
+                                      -Dsonar.host.url=${SONAR_HOST_URL} \
+                                      -Dsonar.login=${SONAR_TOKEN}
+                                """
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+        
+        stage('Build Docker Images') {
+            parallel {
+                stage('Build User Service') {
+                    steps {
+                        script {
+                            buildAndPushImage('user-service')
+                        }
+                    }
+                }
+                stage('Build Booking Service') {
+                    steps {
+                        script {
+                            buildAndPushImage('booking-service')
+                        }
+                    }
+                }
+                stage('Build Payment Service') {
+                    steps {
+                        script {
+                            buildAndPushImage('payment-service')
+                        }
+                    }
+                }
+                stage('Build Partner Service') {
+                    steps {
+                        script {
+                            buildAndPushImage('partner-service')
+                        }
+                    }
+                }
+                stage('Build Catalog Service') {
+                    steps {
+                        script {
+                            buildAndPushImage('catalog-service')
+                        }
+                    }
+                }
+                stage('Build API Gateway') {
+                    steps {
+                        script {
+                            buildAndPushImage('api-gateway')
+                        }
+                    }
+                }
+                stage('Build Discovery Service') {
+                    steps {
+                        script {
+                            buildAndPushImage('discovery-service')
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Security Scan') {
+            steps {
+                script {
+                    def services = ['user-service', 'booking-service', 'payment-service', 'partner-service', 'catalog-service']
+                    services.each { service ->
+                        sh """
+                            trivy image --severity HIGH,CRITICAL \
+                              ${REGISTRY}/${IMAGE_PREFIX}/${service}:${params.VERSION}
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy to Environment') {
+            when {
+                expression { params.DEPLOY }
+            }
+            steps {
+                script {
+                    def cluster = ""
+                    switch(params.ENVIRONMENT) {
+                        case 'dev':
+                            cluster = 'urban-company-dev'
+                            break
+                        case 'staging':
+                            cluster = 'urban-company-staging'
+                            break
+                        case 'prod':
+                            cluster = 'urban-company-prod'
+                            break
+                    }
+                    
+                    withAWS(credentials: 'aws-credentials', region: AWS_REGION) {
+                        sh """
+                            aws eks update-kubeconfig --region ${AWS_REGION} --name ${cluster}
+                            
+                            kubectl apply -f infrastructure/kubernetes/namespace.yaml
+                            kubectl apply -f infrastructure/kubernetes/configmaps/
+                            kubectl apply -f infrastructure/kubernetes/secrets/
+                            kubectl apply -f infrastructure/kubernetes/deployments/
+                            kubectl apply -f infrastructure/kubernetes/services/
+                            kubectl apply -f infrastructure/kubernetes/ingress/
+                            kubectl apply -f infrastructure/kubernetes/hpa/
+                            
+                            # Update image tags
+                            kubectl set image deployment/user-service user-service=${REGISTRY}/${IMAGE_PREFIX}/user-service:${params.VERSION} -n urban-company
+                            kubectl set image deployment/booking-service booking-service=${REGISTRY}/${IMAGE_PREFIX}/booking-service:${params.VERSION} -n urban-company
+                            kubectl set image deployment/payment-service payment-service=${REGISTRY}/${IMAGE_PREFIX}/payment-service:${params.VERSION} -n urban-company
+                            kubectl set image deployment/partner-service partner-service=${REGISTRY}/${IMAGE_PREFIX}/partner-service:${params.VERSION} -n urban-company
+                            kubectl set image deployment/catalog-service catalog-service=${REGISTRY}/${IMAGE_PREFIX}/catalog-service:${params.VERSION} -n urban-company
+                            
+                            # Wait for rollout
+                            kubectl rollout status deployment/user-service -n urban-company
+                            kubectl rollout status deployment/booking-service -n urban-company
+                            kubectl rollout status deployment/payment-service -n urban-company
+                            kubectl rollout status deployment/partner-service -n urban-company
+                            kubectl rollout status deployment/catalog-service -n urban-company
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Smoke Tests') {
+            when {
+                expression { params.DEPLOY }
+            }
+            steps {
+                script {
+                    sh './scripts/smoke-tests.sh ${params.ENVIRONMENT}'
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            slackSend(
+                color: 'good',
+                message: "Deployment to ${params.ENVIRONMENT} succeeded: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+            )
+        }
+        failure {
+            slackSend(
+                color: 'danger',
+                message: "Deployment to ${params.ENVIRONMENT} failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+            )
+        }
+        always {
+            cleanWs()
+        }
+    }
+}
+
+def buildAndPushImage(String service) {
+    dir("services/${service}") {
+        docker.withRegistry("https://${REGISTRY}", 'github-token') {
+            def image = docker.build("${IMAGE_PREFIX}/${service}:${params.VERSION}")
+            image.push()
+            image.push('latest')
+        }
+    }
+}

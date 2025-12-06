@@ -1,0 +1,117 @@
+{
+  "dashboard": {
+    "title": "Urban Company - Payment Service",
+    "tags": [
+      "urban-company",
+      "payment-service"
+    ],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 1,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Payment Success Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(payments_successful_total[5m])) / sum(rate(payments_total[5m])) * 100",
+            "legendFormat": "Success Rate %"
+          }
+        ],
+        "gridPos": {
+          "h": 6,
+          "w": 8,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Total Payment Volume",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(payment_amount_total)",
+            "legendFormat": "Total Amount"
+          }
+        ],
+        "gridPos": {
+          "h": 6,
+          "w": 8,
+          "x": 8,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "Average Transaction Amount",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "avg(payment_amount_sum / payment_amount_count)",
+            "legendFormat": "Avg Amount"
+          }
+        ],
+        "gridPos": {
+          "h": 6,
+          "w": 8,
+          "x": 16,
+          "y": 0
+        }
+      },
+      {
+        "id": 4,
+        "title": "Payments by Gateway",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(payments_total[5m])) by (gateway)",
+            "legendFormat": "{{ gateway }}"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 6
+        }
+      },
+      {
+        "id": 5,
+        "title": "Payment Failures by Reason",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum(payments_failed_total) by (reason)",
+            "legendFormat": "{{ reason }}"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 6
+        }
+      },
+      {
+        "id": 6,
+        "title": "Refund Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(refunds_total[5m])) / sum(rate(payments_total[5m])) * 100",
+            "legendFormat": "Refund Rate %"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 14
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,192 @@
+name: CD - Deploy to Environments
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - 'v*'
+
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_DEV: urban-company-dev
+  EKS_CLUSTER_STAGING: urban-company-staging
+  EKS_CLUSTER_PROD: urban-company-prod
+
+jobs:
+  deploy-dev:
+    name: Deploy to Development
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    environment:
+      name: development
+      url: https://dev.urbancompany.com
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_DEV }}
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f infrastructure/kubernetes/namespace.yaml
+        kubectl apply -f infrastructure/kubernetes/configmaps/
+        kubectl apply -f infrastructure/kubernetes/secrets/
+        kubectl apply -f infrastructure/kubernetes/deployments/
+        kubectl apply -f infrastructure/kubernetes/services/
+        kubectl apply -f infrastructure/kubernetes/ingress/
+        kubectl apply -f infrastructure/kubernetes/hpa/
+
+    - name: Update image tags
+      run: |
+        for service in user-service booking-service payment-service partner-service catalog-service; do
+          kubectl set image deployment/$service \
+            $service=ghcr.io/${{ github.repository }}/$service:develop-${{ github.sha }} \
+            -n urban-company
+        done
+
+    - name: Wait for rollout
+      run: |
+        kubectl rollout status deployment/user-service -n urban-company
+        kubectl rollout status deployment/booking-service -n urban-company
+        kubectl rollout status deployment/payment-service -n urban-company
+        kubectl rollout status deployment/partner-service -n urban-company
+        kubectl rollout status deployment/catalog-service -n urban-company
+
+    - name: Run smoke tests
+      run: |
+        kubectl run smoke-test --image=curlimages/curl:latest --rm -i --restart=Never -- \
+          curl -f http://api-gateway:8080/actuator/health
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [deploy-dev]
+    environment:
+      name: staging
+      url: https://staging.urbancompany.com
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_STAGING }}
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f infrastructure/kubernetes/namespace.yaml
+        kubectl apply -f infrastructure/kubernetes/configmaps/
+        kubectl apply -f infrastructure/kubernetes/secrets/
+        kubectl apply -f infrastructure/kubernetes/deployments/
+        kubectl apply -f infrastructure/kubernetes/services/
+        kubectl apply -f infrastructure/kubernetes/ingress/
+        kubectl apply -f infrastructure/kubernetes/hpa/
+
+    - name: Update image tags
+      run: |
+        for service in user-service booking-service payment-service partner-service catalog-service; do
+          kubectl set image deployment/$service \
+            $service=ghcr.io/${{ github.repository }}/$service:main-${{ github.sha }} \
+            -n urban-company
+        done
+
+    - name: Wait for rollout
+      run: |
+        kubectl rollout status deployment/user-service -n urban-company --timeout=5m
+        kubectl rollout status deployment/booking-service -n urban-company --timeout=5m
+        kubectl rollout status deployment/payment-service -n urban-company --timeout=5m
+        kubectl rollout status deployment/partner-service -n urban-company --timeout=5m
+        kubectl rollout status deployment/catalog-service -n urban-company --timeout=5m
+
+  deploy-prod:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [deploy-staging]
+    environment:
+      name: production
+      url: https://urbancompany.com
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_PROD }}
+
+    - name: Create backup
+      run: |
+        kubectl get all -n urban-company -o yaml > backup-$(date +%Y%m%d-%H%M%S).yaml
+
+    - name: Deploy to Kubernetes (Blue-Green)
+      run: |
+        # Deploy to green environment
+        kubectl apply -f infrastructure/kubernetes/namespace.yaml
+        kubectl apply -f infrastructure/kubernetes/configmaps/
+        kubectl apply -f infrastructure/kubernetes/secrets/
+        kubectl apply -f infrastructure/kubernetes/deployments/
+        kubectl apply -f infrastructure/kubernetes/hpa/
+
+    - name: Update image tags
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        for service in user-service booking-service payment-service partner-service catalog-service; do
+          kubectl set image deployment/$service \
+            $service=ghcr.io/${{ github.repository }}/$service:$VERSION \
+            -n urban-company
+        done
+
+    - name: Wait for rollout with health checks
+      run: |
+        kubectl rollout status deployment/user-service -n urban-company --timeout=10m
+        kubectl rollout status deployment/booking-service -n urban-company --timeout=10m
+        kubectl rollout status deployment/payment-service -n urban-company --timeout=10m
+        kubectl rollout status deployment/partner-service -n urban-company --timeout=10m
+        kubectl rollout status deployment/catalog-service -n urban-company --timeout=10m
+
+    - name: Run production smoke tests
+      run: |
+        # Test all critical endpoints
+        ./scripts/smoke-tests-prod.sh
+
+    - name: Switch traffic (update services)
+      run: |
+        kubectl apply -f infrastructure/kubernetes/services/
+        kubectl apply -f infrastructure/kubernetes/ingress/
+
+    - name: Notify deployment
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: 'Production deployment completed!'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      if: always()

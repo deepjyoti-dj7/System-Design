@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+payment:
+  stripe:
+    api-key: test_stripe_key
+    webhook-secret: test_webhook_secret
+  razorpay:
+    key-id: test_razorpay_key
+    key-secret: test_razorpay_secret
+
+logging:
+  level:
+    root: INFO
+    com.urbanclone: DEBUG

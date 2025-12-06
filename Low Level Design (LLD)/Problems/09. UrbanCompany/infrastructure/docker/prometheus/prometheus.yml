@@ -1,0 +1,103 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'urban-company-monitor'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Load rules once and periodically evaluate them
+rule_files:
+  # - "alerts/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Discovery Service
+  - job_name: 'discovery-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['discovery-service:8761']
+        labels:
+          application: 'discovery-service'
+          environment: 'docker'
+
+  # API Gateway
+  - job_name: 'api-gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['api-gateway:8080']
+        labels:
+          application: 'api-gateway'
+          environment: 'docker'
+
+  # User Service
+  - job_name: 'user-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['user-service:8081']
+        labels:
+          application: 'user-service'
+          environment: 'docker'
+
+  # Booking Service
+  - job_name: 'booking-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['booking-service:8082']
+        labels:
+          application: 'booking-service'
+          environment: 'docker'
+
+  # Payment Service
+  - job_name: 'payment-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['payment-service:8083']
+        labels:
+          application: 'payment-service'
+          environment: 'docker'
+
+  # Partner Service
+  - job_name: 'partner-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['partner-service:8084']
+        labels:
+          application: 'partner-service'
+          environment: 'docker'
+
+  # Catalog Service
+  - job_name: 'catalog-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['catalog-service:8085']
+        labels:
+          application: 'catalog-service'
+          environment: 'docker'
+
+  # PostgreSQL Exporters (if using postgres_exporter)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: []
+        # Add postgres exporters when configured
+
+  # Redis Exporter (if using redis_exporter)
+  - job_name: 'redis'
+    static_configs:
+      - targets: []
+        # Add redis exporter when configured
+
+  # Kafka Exporter (if using kafka_exporter)
+  - job_name: 'kafka'
+    static_configs:
+      - targets: []
+        # Add kafka exporter when configured

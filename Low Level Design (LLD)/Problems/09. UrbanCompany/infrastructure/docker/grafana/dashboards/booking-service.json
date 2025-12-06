@@ -1,0 +1,100 @@
+{
+  "dashboard": {
+    "title": "Urban Company - Booking Service",
+    "tags": [
+      "urban-company",
+      "booking-service"
+    ],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 1,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Bookings Created (per minute)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(bookings_created_total[1m]))",
+            "legendFormat": "Bookings Created"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Booking Status Distribution",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum(bookings_by_status) by (status)",
+            "legendFormat": "{{ status }}"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "Partner Matching Time (p95)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(partner_matching_duration_seconds_bucket[5m])) by (le))",
+            "legendFormat": "P95 Matching Time"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 4,
+        "title": "Booking State Transitions",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(booking_state_transitions_total[5m])) by (from_state, to_state)",
+            "legendFormat": "{{ from_state }} -> {{ to_state }}"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
+      },
+      {
+        "id": 5,
+        "title": "Failed Bookings",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(bookings_failed_total[5m])) by (reason)",
+            "legendFormat": "{{ reason }}"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 16
+        }
+      }
+    ]
+  }
+}

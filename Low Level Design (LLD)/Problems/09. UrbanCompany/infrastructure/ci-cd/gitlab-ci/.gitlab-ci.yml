@@ -1,0 +1,237 @@
+variables:
+  DOCKER_REGISTRY: ghcr.io
+  IMAGE_PREFIX: urban-company
+  AWS_REGION: us-east-1
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
+stages:
+  - test
+  - build
+  - security
+  - deploy-dev
+  - deploy-staging
+  - deploy-prod
+
+cache:
+  paths:
+    - .m2/repository
+    - node_modules/
+
+# Test stage - parallel execution for all services
+test:user-service:
+  stage: test
+  image: maven:3.9-eclipse-temurin-17
+  script:
+    - cd services/user-service
+    - mvn clean test jacoco:report
+  artifacts:
+    reports:
+      junit: services/user-service/target/surefire-reports/TEST-*.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: services/user-service/target/site/jacoco/jacoco.xml
+  only:
+    - branches
+    - merge_requests
+
+test:booking-service:
+  stage: test
+  image: maven:3.9-eclipse-temurin-17
+  script:
+    - cd services/booking-service
+    - mvn clean test jacoco:report
+  artifacts:
+    reports:
+      junit: services/booking-service/target/surefire-reports/TEST-*.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: services/booking-service/target/site/jacoco/jacoco.xml
+  only:
+    - branches
+    - merge_requests
+
+test:payment-service:
+  stage: test
+  image: maven:3.9-eclipse-temurin-17
+  script:
+    - cd services/payment-service
+    - mvn clean test jacoco:report
+  artifacts:
+    reports:
+      junit: services/payment-service/target/surefire-reports/TEST-*.xml
+  only:
+    - branches
+    - merge_requests
+
+test:partner-service:
+  stage: test
+  image: maven:3.9-eclipse-temurin-17
+  script:
+    - cd services/partner-service
+    - mvn clean test jacoco:report
+  artifacts:
+    reports:
+      junit: services/partner-service/target/surefire-reports/TEST-*.xml
+  only:
+    - branches
+    - merge_requests
+
+test:catalog-service:
+  stage: test
+  image: maven:3.9-eclipse-temurin-17
+  script:
+    - cd services/catalog-service
+    - mvn clean test jacoco:report
+  artifacts:
+    reports:
+      junit: services/catalog-service/target/surefire-reports/TEST-*.xml
+  only:
+    - branches
+    - merge_requests
+
+# SonarQube analysis
+sonarqube:
+  stage: test
+  image: maven:3.9-eclipse-temurin-17
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    GIT_DEPTH: "0"
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script:
+    - mvn verify sonar:sonar -Dsonar.projectKey=urban-company -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+  only:
+    - main
+    - develop
+
+# Build Docker images
+.build-template: &build_template
+  stage: build
+  image: docker:24.0
+  services:
+    - docker:24.0-dind
+  before_script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $DOCKER_REGISTRY
+  after_script:
+    - docker logout $DOCKER_REGISTRY
+  only:
+    - main
+    - develop
+    - tags
+
+build:user-service:
+  <<: *build_template
+  script:
+    - cd services/user-service
+    - docker build -t $DOCKER_REGISTRY/$IMAGE_PREFIX/user-service:$CI_COMMIT_SHORT_SHA .
+    - docker build -t $DOCKER_REGISTRY/$IMAGE_PREFIX/user-service:latest .
+    - docker push $DOCKER_REGISTRY/$IMAGE_PREFIX/user-service:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_REGISTRY/$IMAGE_PREFIX/user-service:latest
+
+build:booking-service:
+  <<: *build_template
+  script:
+    - cd services/booking-service
+    - docker build -t $DOCKER_REGISTRY/$IMAGE_PREFIX/booking-service:$CI_COMMIT_SHORT_SHA .
+    - docker push $DOCKER_REGISTRY/$IMAGE_PREFIX/booking-service:$CI_COMMIT_SHORT_SHA
+
+build:payment-service:
+  <<: *build_template
+  script:
+    - cd services/payment-service
+    - docker build -t $DOCKER_REGISTRY/$IMAGE_PREFIX/payment-service:$CI_COMMIT_SHORT_SHA .
+    - docker push $DOCKER_REGISTRY/$IMAGE_PREFIX/payment-service:$CI_COMMIT_SHORT_SHA
+
+build:partner-service:
+  <<: *build_template
+  script:
+    - cd services/partner-service
+    - docker build -t $DOCKER_REGISTRY/$IMAGE_PREFIX/partner-service:$CI_COMMIT_SHORT_SHA .
+    - docker push $DOCKER_REGISTRY/$IMAGE_PREFIX/partner-service:$CI_COMMIT_SHORT_SHA
+
+build:catalog-service:
+  <<: *build_template
+  script:
+    - cd services/catalog-service
+    - docker build -t $DOCKER_REGISTRY/$IMAGE_PREFIX/catalog-service:$CI_COMMIT_SHORT_SHA .
+    - docker push $DOCKER_REGISTRY/$IMAGE_PREFIX/catalog-service:$CI_COMMIT_SHORT_SHA
+
+# Security scanning
+security:trivy:
+  stage: security
+  image: aquasec/trivy:latest
+  script:
+    - trivy image --severity HIGH,CRITICAL $DOCKER_REGISTRY/$IMAGE_PREFIX/user-service:$CI_COMMIT_SHORT_SHA
+    - trivy image --severity HIGH,CRITICAL $DOCKER_REGISTRY/$IMAGE_PREFIX/booking-service:$CI_COMMIT_SHORT_SHA
+    - trivy image --severity HIGH,CRITICAL $DOCKER_REGISTRY/$IMAGE_PREFIX/payment-service:$CI_COMMIT_SHORT_SHA
+  allow_failure: true
+  only:
+    - main
+    - develop
+
+# Deploy to dev
+deploy:dev:
+  stage: deploy-dev
+  image: bitnami/kubectl:latest
+  before_script:
+    - kubectl config set-cluster k8s --server="${K8S_DEV_SERVER}"
+    - kubectl config set-credentials gitlab --token="${K8S_DEV_TOKEN}"
+    - kubectl config set-context default --cluster=k8s --user=gitlab
+    - kubectl config use-context default
+  script:
+    - kubectl apply -f infrastructure/kubernetes/namespace.yaml
+    - kubectl apply -f infrastructure/kubernetes/configmaps/
+    - kubectl apply -f infrastructure/kubernetes/secrets/
+    - kubectl apply -f infrastructure/kubernetes/deployments/
+    - kubectl apply -f infrastructure/kubernetes/services/
+    - kubectl apply -f infrastructure/kubernetes/ingress/
+    - kubectl apply -f infrastructure/kubernetes/hpa/
+    - kubectl set image deployment/user-service user-service=$DOCKER_REGISTRY/$IMAGE_PREFIX/user-service:$CI_COMMIT_SHORT_SHA -n urban-company
+    - kubectl rollout status deployment/user-service -n urban-company
+  environment:
+    name: development
+    url: https://dev.urbancompany.com
+  only:
+    - develop
+
+# Deploy to staging
+deploy:staging:
+  stage: deploy-staging
+  image: bitnami/kubectl:latest
+  before_script:
+    - kubectl config set-cluster k8s --server="${K8S_STAGING_SERVER}"
+    - kubectl config set-credentials gitlab --token="${K8S_STAGING_TOKEN}"
+    - kubectl config set-context default --cluster=k8s --user=gitlab
+    - kubectl config use-context default
+  script:
+    - kubectl apply -f infrastructure/kubernetes/
+    - kubectl set image deployment/user-service user-service=$DOCKER_REGISTRY/$IMAGE_PREFIX/user-service:$CI_COMMIT_SHORT_SHA -n urban-company
+    - kubectl rollout status deployment/user-service -n urban-company
+  environment:
+    name: staging
+    url: https://staging.urbancompany.com
+  when: manual
+  only:
+    - main
+
+# Deploy to production
+deploy:prod:
+  stage: deploy-prod
+  image: bitnami/kubectl:latest
+  before_script:
+    - kubectl config set-cluster k8s --server="${K8S_PROD_SERVER}"
+    - kubectl config set-credentials gitlab --token="${K8S_PROD_TOKEN}"
+    - kubectl config set-context default --cluster=k8s --user=gitlab
+    - kubectl config use-context default
+  script:
+    - kubectl apply -f infrastructure/kubernetes/
+    - kubectl set image deployment/user-service user-service=$DOCKER_REGISTRY/$IMAGE_PREFIX/user-service:$CI_COMMIT_TAG -n urban-company
+    - kubectl rollout status deployment/user-service -n urban-company
+  environment:
+    name: production
+    url: https://urbancompany.com
+  when: manual
+  only:
+    - tags
